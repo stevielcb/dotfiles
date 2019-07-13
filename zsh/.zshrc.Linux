@@ -1,0 +1,83 @@
+################################################################################
+# Software Compliance
+################################################################################
+
+# You'll need a few things before this will work:
+# 1. stow
+# 2. git
+#  For ponysay
+# 3. texinfo
+# 4. python36
+#  For exa:
+# 5. rust
+# 6. cmake
+# 7. cargo
+# 8. libgit2
+# 9. zlib-devel
+
+PREREQS_VERSION="201907-01"
+
+function install_prereqs_linux() {
+  echo "Installing prerequisites ..."
+  sudo zsh << EOF
+curl -Lq https://download.opensuse.org/repositories/shells:zsh-users:zsh-syntax-highlighting/CentOS_7/shells:zsh-users:zsh-syntax-highlighting.repo > /etc/yum.repos.d/zsh-syntax-highlighting.repo
+EOF
+  sudo yum install -y \
+    fortune-mod \
+    stow \
+    zsh-syntax-highlighting
+
+  # Powerlevel9k
+  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel9k https://github.com/bhilburn/powerlevel9k.git
+
+  # ponysay
+  if ! [ -d ~/ponysay ]; then
+    ( git clone https://github.com/erkin/ponysay ~/ponysay && \
+      cd ~/ponysay && \
+      python3 setup.py --freedom=partial --private install && \
+      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
+  else
+    ( cd ~/ponysay && \
+      git pull && \
+      python3 setup.py --freedom=partial --private install && \
+      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
+  fi
+
+  # exa
+  if ! cmd_exists exa; then
+    ( git clone https://github.com/ogham/exa.git ~/exa && \
+      cd ~/exa && \
+      cargo build --release && \
+      /bin/mv -f ./target/release/exa ~/bin/ )
+  fi
+
+  install_prereqs_common
+
+  # Update build # to prevent the prereq check happening too often
+  echo -n "${PREREQS_VERSION}" > ${PREREQS}
+}
+
+# Check if we need to install software
+if ! [ -f ${PREREQS} ]; then
+  # We haven't done a prereq install if this file doesn't already exist
+  install_prereqs_linux
+else
+  # The contents of the $PREREQS file will just be a build number. When the
+  # prereqs need to be updated, $PREREQS_VERSION should be incremented.
+  LAST_UPDATE=$(cat ${PREREQS})
+  if [ "${LAST_UPDATE}" != "${PREREQS_VERSION}" ]; then
+    install_prereqs_linux
+  fi
+fi;
+
+################################################################################
+# Environment Variables
+################################################################################
+
+ZSH_PLUGINS=(git ansible common-aliases debian docker encode64 extract jsontools kubectl ng node npm pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
+
+ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+ZSH_THEME="powerlevel9k/powerlevel9k"
+
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator background_jobs history time)
