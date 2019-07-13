@@ -1,4 +1,4 @@
-export PATH="~/bin:~/go/bin:/usr/local/bin:$PATH"
+export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:$PATH"
 for USERBIN in ~/bin ~/go/bin; do
   mkdir -p ${USERBIN}
 done
