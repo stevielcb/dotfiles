@@ -1,0 +1,9 @@
+[user]
+  email = stevenwoah@users.noreply.github.com
+  name = stevenwoah
+[color]
+  ui = auto
+  branch = true
+  diff = true
+  interactive = true
+  status = true
