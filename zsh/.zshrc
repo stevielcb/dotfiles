@@ -37,6 +37,7 @@ source ~/.zshrc.$(uname)
 
 POWERLEVEL9K_MODE="awesome-patched"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(status os_icon load context dir vcs)
+POWERLEVEL9K_HIDE_BRANCH_ICON=true
 
 ################################################################################
 # Oh My ZSH!
