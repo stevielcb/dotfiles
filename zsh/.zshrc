@@ -27,6 +27,12 @@ function install_prereqs_common() {
 
   # zsh-autosuggestions
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
+
+  # Pathogen
+  if ! [ -d ~/.vim/autoload ]; then
+    mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+      curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+  fi;
 }
 
 source ~/.zshrc.$(uname)

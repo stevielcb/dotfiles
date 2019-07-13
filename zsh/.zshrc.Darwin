@@ -6,17 +6,29 @@
 # https://brew.sh/
 # And you'll also need stow already, obviously: `brew install stow`
 
-PREREQS_VERSION="201907-01"
+PREREQS_VERSION="201907-02"
 
 function install_prereqs_darwin() {
   /usr/local/bin/brew install \
     cask \
+    cmake \
     exa \
     fortune \
+    glide \
+    go \
     grip \
+    node \
+    npm \
+    packer \
     ponysay \
+    rust \
     stow \
+    vagrant \
+    vim \
     zsh-syntax-highlighting
+
+  /usr/local/bin/brew cask install \
+    vagrant
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
@@ -28,6 +40,14 @@ function install_prereqs_darwin() {
       https://github.com/Falkor/dotfiles/raw/master/fonts/SourceCodePro%2BPowerline%2BAwesome%2BRegular.ttf \
       > ${PA_FONT}
   fi
+
+  # YouCompleteMe
+  YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
+  do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
+    ( cd ~/.vim/bundle/YouCompleteMe && \
+      git submodule update --init --recursive && \
+      python3 ./install.py ${YCM_FLAGS[@]} \
+    )
 
   install_prereqs_common
 
@@ -58,7 +78,7 @@ alias ss="sudo -Es"
 # Environment Variables
 ################################################################################
 
-export GOPATH="~/Documents/Development/go"
+export GOPATH="${HOME}/Documents/Development/go"
 
 ZSH_PLUGINS=(git ansible brew cask common-aliases docker encode64 extract jsontools kubectl ng node npm osx pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
 

@@ -15,16 +15,28 @@
 # 8. libgit2
 # 9. zlib-devel
 
-PREREQS_VERSION="201907-01"
+PREREQS_VERSION="201907-02"
 
 function install_prereqs_linux() {
   echo "Installing prerequisites ..."
   sudo zsh << EOF
 curl -Lq https://download.opensuse.org/repositories/shells:zsh-users:zsh-syntax-highlighting/CentOS_7/shells:zsh-users:zsh-syntax-highlighting.repo > /etc/yum.repos.d/zsh-syntax-highlighting.repo
 EOF
+
+  sudo yum install -y centos-release-scl
+
+  sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
+
   sudo yum install -y \
+    devtoolset-6 \
     fortune-mod \
-    stow \
+    gcc-c++ \
+    glide \
+    golang \
+    libstdc++-devel \
+    ncurses-devel \
+    python-devel \
+    python36-devel \
     zsh-syntax-highlighting
 
   # Powerlevel9k
@@ -50,6 +62,15 @@ EOF
       cargo build --release && \
       /bin/mv -f ./target/release/exa ~/bin/ )
   fi
+
+  # YouCompleteMe
+  YCM_FLAGS=(--clang-completer --go-completer --rust-completer)
+  do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
+    ( cd ~/.vim/bundle/YouCompleteMe && \
+      git submodule update --init --recursive && \
+      source /opt/rh/devtoolset-6/enable && \
+      python3 ./install.py ${YCM_FLAGS[@]} \
+    )
 
   install_prereqs_common
 
@@ -87,3 +108,5 @@ ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ZSH_THEME="powerlevel9k/powerlevel9k"
 
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator background_jobs history time)
+
+export PATH="${HOME}/.local/vim/bin:${PATH}"
