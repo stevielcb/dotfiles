@@ -59,7 +59,7 @@ source ${ZSH_SYNTAX}
 
 export VISUAL="vim"
 export EDITOR="${VISUAL}"
-export DEFAULT_USER="${USER}"
+[ "${USER}" != "root" ] && export DEFAULT_USER="${USER}"
 
 ################################################################################
 # Aliases
