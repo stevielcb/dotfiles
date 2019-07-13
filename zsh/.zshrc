@@ -44,6 +44,7 @@ POWERLEVEL9K_HIDE_BRANCH_ICON=true
 ################################################################################
 
 export ZSH=~/.oh-my-zsh
+ZSH_DISABLE_COMPFIX="true"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 set -A plugins ${(v)ZSH_PLUGINS}
