@@ -43,7 +43,7 @@ function install_prereqs_common() {
   if ! [ -d ~/.iterm2 ]; then
     mkdir -p ~/.iterm2
     UTILITIES=(imgcat imgls it2attention it2check it2copy it2dl it2getvar it2git it2setcolor it2setkeylabel it2ul it2universion)
-    for U in "${UTILITIES[@]}" do
+    for U in "${UTILITIES[@]}"; do
       echo "Downloading ${U} ..."
       get_it_gurr "https://iterm2.com/utilities/${U}" > ~/.iterm2/${U} && chmod +x ~/.iterm2/${U}
     done
