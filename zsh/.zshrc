@@ -105,6 +105,7 @@ export EDITOR="${VISUAL}"
 
 if ! [ -f ~/.giphy-api ]; then
   vared -p "Please enter your Giphy.com API key: " -c GIPHY_API_KEY
+  echo -n "${GIPHY_API_KEY}" > ~/.giphy-api
 else
   GIPHY_API_KEY=$(cat ~/.giphy-api)
 fi
