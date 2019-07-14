@@ -158,25 +158,44 @@ SOFTWARE.
 EOF
 }
 
+function get_it_gurr() {
+  timeout 2 curl \
+    -L \
+    -s \
+    --compressed \
+    $*
+}
+
 function xkcd() {
   RAND_COMIC=$[${RANDOM}%2000+1]
-  #RAND_COMIC=$(python3 -c 'from random import randint; print(randint(1,2000));')
-  XKCD_JSON=$(curl -Ls --compressed https://xkcd.com/${RAND_COMIC}/info.0.json)
+  XKCD_JSON=$(get_it_gurr https://xkcd.com/${RAND_COMIC}/info.0.json)
   IMG_URL=$(printf %s ${XKCD_JSON} | jq -r '.img')
   ALT_TXT=$(printf %s ${XKCD_JSON} | jq -r '.alt')
-  curl -Ls --compressed ${IMG_URL} | imgcat;
+  get_it_gurr ${IMG_URL} | imgcat;
   echo "${ALT_TXT}";
 }
 
 function dogpic() {
-  curl -Ls --compressed $(curl -Ls --compressed https://dog.ceo/api/breeds/image/random | jq -r '.message') | imgcat
+  get_it_gurr $(get_it_gurr https://dog.ceo/api/breeds/image/random | jq -r '.message') | imgcat
 }
 
 function reaction_gif() {
-  curl -Ls --compressed $( \
-    curl -Ls --compressed http://replygif.net/random | \
+  get_it_gurr $( \
+    get_it_gurr http://replygif.net/random | \
     grep 'img src' | \
     sed -E 's/^.*img src="([^"]+).*$/\1/g' \
+    ) | \
+    imgcat
+}
+
+function giphy() {
+  URL="http://api.giphy.com/v1/gifs/random?api_key=$(cat ${HOME}/.giphy-api)"
+  [[ "$1" == "" ]] && echo "ERROR: No search tag provided" && return
+  [[ "$2" == "" ]] || URL="${URL}&rating=${2}"
+  URL="${URL}&tag=$(echo ${1} | sed 's/ /+/g')"
+  get_it_gurr $( \
+    get_it_gurr ${URL} | \
+      jq -r '.data.images.original.url' \
     ) | \
     imgcat
 }
@@ -185,18 +204,19 @@ function reaction_gif() {
 # Login
 ################################################################################
 
-RAND_MOTD=$[${RANDOM}%4+1]
-case ${RAND_MOTD} in
-  1)
-    fortune | ponysay
-  ;;
-  2)
-    xkcd
-  ;;
-  3)
-    dogpic
-  ;;
-  4)
-    reaction_gif
-  ;;
-esac
+COMMANDS=( \
+  'xkcd' \
+  'giphy "the simpsons"' \
+  "giphy \"bob's burgers\"" \
+  'giphy "brooklyn 99"' \
+  'giphy rupaul r' \
+  'giphy futurama' \
+  'giphy "30 rock"' \
+  'giphy "american dad" r' \
+  'giphy "key peele" r' \
+  'giphy "snl" r' \
+  'giphy "golden girls"' \
+  'giphy "rick and morty"r ' \
+)
+
+eval ${COMMANDS[ $RANDOM % ${#COMMANDS[*]} + 1 ]}
