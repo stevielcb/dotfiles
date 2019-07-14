@@ -86,4 +86,4 @@ ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator background_jobs history battery time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs kubecontext history battery time)
