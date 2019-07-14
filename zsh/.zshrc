@@ -33,6 +33,21 @@ function install_prereqs_common() {
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
       curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   fi;
+
+  # iTerm2 Shell Integration
+  if ! [ -f ~/.iterm2_shell_integration.zsh ]; then
+    get_it_gurr https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash
+  fi
+
+  # iTerm2 Utilities
+  if ! [ -d ~/.iterm2 ]; then
+    mkdir -p ~/.iterm2
+    UTILITIES=(imgcat imgls it2attention it2check it2copy it2dl it2getvar it2git it2setcolor it2setkeylabel it2ul it2universion)
+    for U in "${UTILITIES[@]}" do
+      echo "Downloading ${U} ..."
+      get_it_gurr "https://iterm2.com/utilities/${U}" > ~/.iterm2/${U} && chmod +x ~/.iterm2/${U}
+    done
+  fi
 }
 
 source ~/.zshrc.$(uname)
