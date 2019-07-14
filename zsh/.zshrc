@@ -1,4 +1,4 @@
-export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:$PATH"
+export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:${HOME}/.iterm2:$PATH"
 for USERBIN in ~/bin ~/go/bin; do
   mkdir -p ${USERBIN}
 done
@@ -103,6 +103,12 @@ export VISUAL="vim"
 export EDITOR="${VISUAL}"
 [ "${USER}" != "root" ] && export DEFAULT_USER="${USER}"
 
+if ! [ -f ~/.giphy-api ]; then
+  vared -p "Please enter your Giphy.com API key: " -c GIPHY_API_KEY
+else
+  GIPHY_API_KEY=$(cat ~/.giphy-api)
+fi
+
 ################################################################################
 # Aliases
 ################################################################################
@@ -151,8 +157,45 @@ SOFTWARE.
 EOF
 }
 
+function xkcd() {
+  RAND_COMIC=$[${RANDOM}%2000+1]
+  #RAND_COMIC=$(python3 -c 'from random import randint; print(randint(1,2000));')
+  XKCD_JSON=$(curl -Ls --compressed https://xkcd.com/${RAND_COMIC}/info.0.json)
+  IMG_URL=$(printf %s ${XKCD_JSON} | jq -r '.img')
+  ALT_TXT=$(printf %s ${XKCD_JSON} | jq -r '.alt')
+  curl -Ls --compressed ${IMG_URL} | imgcat;
+  echo "${ALT_TXT}";
+}
+
+function dogpic() {
+  curl -Ls --compressed $(curl -Ls --compressed https://dog.ceo/api/breeds/image/random | jq -r '.message') | imgcat
+}
+
+function reaction_gif() {
+  curl -Ls --compressed $( \
+    curl -Ls --compressed http://replygif.net/random | \
+    grep 'img src' | \
+    sed -E 's/^.*img src="([^"]+).*$/\1/g' \
+    ) | \
+    imgcat
+}
+
 ################################################################################
 # Login
 ################################################################################
 
-fortune | ponysay
+RAND_MOTD=$[${RANDOM}%4+1]
+case ${RAND_MOTD} in
+  1)
+    fortune | ponysay
+  ;;
+  2)
+    xkcd
+  ;;
+  3)
+    dogpic
+  ;;
+  4)
+    reaction_gif
+  ;;
+esac
