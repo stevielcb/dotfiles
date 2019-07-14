@@ -15,7 +15,7 @@
 # 8. libgit2
 # 9. zlib-devel
 
-PREREQS_VERSION="201907-02"
+PREREQS_VERSION="201907-03"
 
 function install_prereqs_linux() {
   echo "Installing prerequisites ..."
@@ -28,7 +28,7 @@ EOF
   sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
 
   sudo yum install -y \
-    devtoolset-6 \
+    devtoolset-8 \
     fortune-mod \
     gcc-c++ \
     glide \
@@ -39,8 +39,18 @@ EOF
     python36-devel \
     zsh-syntax-highlighting
 
-  # Powerlevel9k
-  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel9k https://github.com/bhilburn/powerlevel9k.git
+  # Make sure we have GhettoForge
+  if ! [ -f /etc/yum.repos.d/gf.repo ]; then
+    sudo rpm -Uvh --reinstall http://mirror.ghettoforge.org/distributions/gf/gf-release-latest.gf.el7.noarch.rpm
+    rpm --import http://mirror.ghettoforge.org/distributions/gf/RPM-GPG-KEY-gf.el7
+  fi
+
+  sudo yum install -y \
+    --enablerepo=gf-plus \
+    zsh
+
+  # Powerlevel10k
+  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
 
   # ponysay
   if ! [ -d ~/ponysay ]; then
@@ -89,7 +99,7 @@ EOF
   do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
     ( cd ~/.vim/bundle/YouCompleteMe && \
       git submodule update --init --recursive && \
-      source /opt/rh/devtoolset-6/enable && \
+      source /opt/rh/devtoolset-8/enable && \
       python3 ./install.py ${YCM_FLAGS[@]} \
     )
 
@@ -126,7 +136,7 @@ ZSH_PLUGINS=(git ansible common-aliases debian docker encode64 extract jsontools
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-ZSH_THEME="powerlevel9k/powerlevel9k"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator background_jobs history time)
 
