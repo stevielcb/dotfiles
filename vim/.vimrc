@@ -17,3 +17,5 @@ set backspace=indent,eol,start
 "let g:loaded_youcompleteme = 0
 let vim_markdown_preview_github=1
 let vim_markdown_preview_browser='Google Chrome'
+
+let g:airline_theme='violet'

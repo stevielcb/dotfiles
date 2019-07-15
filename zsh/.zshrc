@@ -40,6 +40,9 @@ function install_prereqs_common() {
   # vim-airline
   do_git_update ~/.vim/bundle/vim-airline https://github.com/vim-airline/vim-airline
 
+  # vim-airline-themes
+  do_git_update ~/.vim/bundle/vim-airline-themes https://github.com/vim-airline/vim-airline-themes
+
   # iTerm2 Shell Integration
   if ! [ -f ~/.iterm2_shell_integration.zsh ]; then
     get_it_gurr https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash
