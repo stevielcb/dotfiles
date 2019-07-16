@@ -31,7 +31,7 @@ function do_git_update() {
 
 function install_prereqs_common() {
   # Oh-My-ZSH!
-  do_git_update ~/.oh-my-zsh https://github.com/robbyrussell/oh-my-zsh.git
+  do_git_update ~/.oh-my-zsh https://github.com/robbyrussell/oh-my-zsh
 
   # zsh-autosuggestions
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
