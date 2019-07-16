@@ -13,6 +13,14 @@ function cmd_exists() {
   return `which $1 >/dev/null`
 }
 
+function get_it_gurr() {
+  timeout 2 curl \
+    -L \
+    -s \
+    --compressed \
+    $*
+}
+
 function do_git_update() {
   if ! [ -d ${1} ]; then
     git clone ${2} ${1}
@@ -180,14 +188,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 EOF
-}
-
-function get_it_gurr() {
-  timeout 2 curl \
-    -L \
-    -s \
-    --compressed \
-    $*
 }
 
 function xkcd() {
