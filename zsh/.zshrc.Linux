@@ -148,6 +148,8 @@ function install_prereqs_linux_ubuntu() {
     vim-youcompleteme \
     zsh-syntax-highlighting
 
+  install_prereqs_common
+
   # SourceCodePro+Powerline+Awesome Font for Powerlevel10k
   PA_FONT=~/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf
   if ! [ -f ${PA_FONT} ]; then
@@ -173,8 +175,6 @@ function install_prereqs_linux_ubuntu() {
       python3 setup.py --freedom=partial --private install && \
       /bin/mv -f ~/.local/bin/pony* ~/bin/ )
   fi
-
-  install_prereqs_common
 
   # Update build # to prevent the prereq check happening too often
   echo -n "${PREREQS_VERSION}" > ${PREREQS}
