@@ -190,6 +190,7 @@ function install_prereqs_linux_arch() {
     glide \
     go-pie \
     golang-golang-x-tools \
+    jq \
     zsh-syntax-highlighting
 
   install_prereqs_common
