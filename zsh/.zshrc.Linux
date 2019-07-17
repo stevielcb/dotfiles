@@ -21,12 +21,19 @@
 #  For ponysay
 # 3. texinfo
 # 4. python3
+#################### Arch ######################
+# 1. stow
+# 2. git
 
 PREREQS_VERSION="201907-04"
 
 function install_prereqs_linux() {
   egrep -i '(fedora|centos)' /etc/os-release && install_prereqs_linux_redhat
   egrep -i 'ubuntu' /etc/os-release && install_prereqs_linux_ubuntu
+  egrep -i '(arch|manjaro)' /etc/os-release && install_prereqs_linux_arch
+
+  # Update build # to prevent the prereq check happening too often
+  echo -n "${PREREQS_VERSION}" > ${PREREQS}
 }
 
 function install_prereqs_linux_redhat() {
@@ -127,9 +134,6 @@ EOF
     )
 
   install_prereqs_common
-
-  # Update build # to prevent the prereq check happening too often
-  echo -n "${PREREQS_VERSION}" > ${PREREQS}
 }
 
 function install_prereqs_linux_ubuntu() {
@@ -175,10 +179,48 @@ function install_prereqs_linux_ubuntu() {
       python3 setup.py --freedom=partial --private install && \
       /bin/mv -f ~/.local/bin/pony* ~/bin/ )
   fi
-
-  # Update build # to prevent the prereq check happening too often
-  echo -n "${PREREQS_VERSION}" > ${PREREQS}
 }
+
+function install_prereqs_linux_arch() {
+  echo "Installing prerequisites ..."
+  sudo pacman -Syu --needed --noconfirm \
+    exa \
+    fortune-mod \
+    gcc \
+    glide \
+    go-pie \
+    golang-golang-x-tools \
+    zsh-syntax-highlighting
+
+  install_prereqs_common
+
+  # SourceCodePro+Powerline+Awesome Font for Powerlevel10k
+  PA_FONT=~/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf
+  if ! [ -f ${PA_FONT} ]; then
+    mkdir -p ~/.fonts
+    curl -Lq \
+      https://github.com/Falkor/dotfiles/raw/master/fonts/SourceCodePro%2BPowerline%2BAwesome%2BRegular.ttf \
+      > ${PA_FONT}
+    fc-cache -v
+  fi
+
+  # Powerlevel10k
+  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
+
+  # ponysay
+  if ! [ -d ~/ponysay ]; then
+    ( git clone https://github.com/erkin/ponysay ~/ponysay && \
+      cd ~/ponysay && \
+      python3 setup.py --freedom=partial --private install && \
+      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
+  else
+    ( cd ~/ponysay && \
+      git pull && \
+      python3 setup.py --freedom=partial --private install && \
+      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
+  fi
+}
+
 
 # Check if we need to install software
 if ! [ -f ${PREREQS} ]; then
