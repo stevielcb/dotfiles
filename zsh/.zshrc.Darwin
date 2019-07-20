@@ -78,12 +78,13 @@ alias ss="sudo -Es"
 # Environment Variables
 ################################################################################
 
-export GOPATH="${HOME}/Documents/Development/go"
+export GOPATH="${HOME}/go"
+export PATH="${GOPATH}/bin:${PATH}"
 
-ZSH_PLUGINS=(git ansible brew cask common-aliases docker encode64 extract jsontools kubectl ng node npm osx pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
+ZSH_PLUGINS=(git ansible brew cask common-aliases docker encode64 extract jsontools ng node npm osx pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
 
 ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs kubecontext history battery time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history battery time)

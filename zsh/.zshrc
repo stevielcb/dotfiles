@@ -1,3 +1,5 @@
+#zmodload zsh/zprof
+
 export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:${HOME}/.iterm2:$PATH"
 for USERBIN in ~/bin ~/go/bin; do
   mkdir -p ${USERBIN}
@@ -228,19 +230,14 @@ function giphy() {
 # Login
 ################################################################################
 
-COMMANDS=( \
-  'xkcd' \
-  'giphy "the simpsons"' \
-  "giphy \"bob's burgers\"" \
-  'giphy "brooklyn 99"' \
-  'giphy rupaul r' \
-  'giphy futurama' \
-  'giphy "30 rock"' \
-  'giphy "american dad" r' \
-  'giphy "key peele" r' \
-  'giphy "snl" r' \
-  'giphy "golden girls"' \
-  'giphy "rick and morty"r ' \
-)
+MOTD_CACHE_DIR=~/.motd \
+MOTD_CACHE_MAX_FILES=2000 \
+MOTD_GIPHY_API_KEY_FILE=~/.giphy-api \
+MOTD_GIPHY_TAGS="the simpsons:g,futurama:g,bob's burgers:g,brooklyn 99:g,rupaul:r,30 rock:g,american dad:r,key peele:r,snl:r,golden girls:g,rick and morty:r" \
+MOTD_DOWNLOAD_INTERVAL=300 \
+MOTD_CLEANUP_INTERVAL=1800 \
+  motd-server &!
 
-eval ${COMMANDS[ $RANDOM % ${#COMMANDS[*]} + 1 ]}
+motd-client
+
+#zprof
