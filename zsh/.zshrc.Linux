@@ -253,7 +253,9 @@ alias ss="sudo --preserve-env=HOME -s"
 # Environment Variables
 ################################################################################
 
-ZSH_PLUGINS+=(debian)
+ZSH_PLUGINS+=(
+  debian
+)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 egrep -i "(alpine|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

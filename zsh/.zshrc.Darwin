@@ -79,7 +79,11 @@ alias ss="sudo -Es"
 export GOPATH="${HOME}/go"
 export PATH="${GOPATH}/bin:${PATH}"
 
-ZSH_PLUGINS+=(brew cask osx)
+ZSH_PLUGINS+=(
+  brew
+  cask
+  osx
+)
 
 ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
