@@ -191,6 +191,7 @@ function install_prereqs_linux_arch() {
     go-pie \
     golang-golang-x-tools \
     jq \
+    pygmentize \
     python-pygments \
     zsh-syntax-highlighting
 
