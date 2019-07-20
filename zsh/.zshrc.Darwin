@@ -6,7 +6,7 @@
 # https://brew.sh/
 # And you'll also need stow already, obviously: `brew install stow`
 
-PREREQS_VERSION="201907-02"
+PREREQS_VERSION="201907-03"
 
 function install_prereqs_darwin() {
   /usr/local/bin/brew install \
@@ -30,16 +30,13 @@ function install_prereqs_darwin() {
   /usr/local/bin/brew cask install \
     vagrant
 
+  /usr/local/bin/brew cask install \
+    font-firacode-nerd-font
+
+  pip3 install pygments
+
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
-  # SourceCodePro+Powerline+Awesome Font for Powerlevel10k
-  PA_FONT=~/Library/Fonts/SourceCodePro+Powerline+Awesome+Regular.ttf
-  if ! [ -f ${PA_FONT} ]; then
-    curl -Lq \
-      https://github.com/Falkor/dotfiles/raw/master/fonts/SourceCodePro%2BPowerline%2BAwesome%2BRegular.ttf \
-      > ${PA_FONT}
-  fi
 
   # YouCompleteMe
   YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
@@ -72,6 +69,7 @@ fi;
 # Aliases
 ################################################################################
 
+alias cat="ccat"
 alias ss="sudo -Es"
 
 ################################################################################
@@ -81,10 +79,11 @@ alias ss="sudo -Es"
 export GOPATH="${HOME}/go"
 export PATH="${GOPATH}/bin:${PATH}"
 
-ZSH_PLUGINS=(git ansible brew cask common-aliases docker encode64 extract jsontools ng node npm osx pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
+ZSH_PLUGINS=(ansible brew cask colored-man-pages colorize common-aliases copybuffer copydir copyfile docker encode64 extract git jsontools ng node npm osx pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
 
 ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_COLORIZE_STYLE="friendly"
 
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history battery time)

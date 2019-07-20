@@ -75,7 +75,7 @@ source ~/.zshrc.$(uname)
 # powerlevel9k + 10k
 ################################################################################
 
-POWERLEVEL9K_MODE="awesome-patched"
+POWERLEVEL9K_MODE="nerdfont-complete"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(status os_icon load ram newline context dir vcs)
 POWERLEVEL9K_HIDE_BRANCH_ICON=true
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=1

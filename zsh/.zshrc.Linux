@@ -191,17 +191,19 @@ function install_prereqs_linux_arch() {
     go-pie \
     golang-golang-x-tools \
     jq \
+    python-pygments \
     zsh-syntax-highlighting
 
   install_prereqs_common
 
-  # SourceCodePro+Powerline+Awesome Font for Powerlevel10k
-  PA_FONT=~/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf
-  if ! [ -f ${PA_FONT} ]; then
+  # FiraCode Nerd Fonts for Powerlevel10k
+  FC_FONT="${HOME}/.fonts/Fura Code Bold Nerd Font Complete.ttf"
+  if ! [ -f ${FC_FONT} ]; then
     mkdir -p ~/.fonts
-    curl -Lq \
-      https://github.com/Falkor/dotfiles/raw/master/fonts/SourceCodePro%2BPowerline%2BAwesome%2BRegular.ttf \
-      > ${PA_FONT}
+    TMP_ZIP="${HOME}/FiraCode.zip"
+    curl -Ls https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip > ${TMP_ZIP} && \
+      unzip -u -d ~/.fonts/ ${TMP_ZIP} && \
+      /bin/rm -f ${TMP_ZIP}
     fc-cache -v
   fi
 
@@ -240,19 +242,21 @@ fi;
 # Aliases
 ################################################################################
 
+alias cat="ccat"
 alias ss="sudo --preserve-env=HOME -s"
 
 ################################################################################
 # Environment Variables
 ################################################################################
 
-ZSH_PLUGINS=(git ansible common-aliases debian docker encode64 extract jsontools kubectl ng node npm pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
+ZSH_PLUGINS=(ansible colored-man-pages colorize common-aliases debian docker encode64 extract git jsontools ng node npm pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 egrep -i "(alpine|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_COLORIZE_STYLE="friendly"
 
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator background_jobs history time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history time)
 
 export PATH="${HOME}/.local/vim/bin:${PATH}"
