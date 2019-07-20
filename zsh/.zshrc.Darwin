@@ -79,7 +79,7 @@ alias ss="sudo -Es"
 export GOPATH="${HOME}/go"
 export PATH="${GOPATH}/bin:${PATH}"
 
-ZSH_PLUGINS=(ansible brew cask colored-man-pages colorize common-aliases copybuffer copydir copyfile docker encode64 extract git jsontools ng node npm osx pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
+ZSH_PLUGINS+=(brew cask osx)
 
 ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

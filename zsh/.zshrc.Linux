@@ -253,7 +253,7 @@ alias ss="sudo --preserve-env=HOME -s"
 # Environment Variables
 ################################################################################
 
-ZSH_PLUGINS=(ansible colored-man-pages colorize common-aliases debian docker encode64 extract git jsontools ng node npm pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
+ZSH_PLUGINS+=(debian)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 egrep -i "(alpine|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

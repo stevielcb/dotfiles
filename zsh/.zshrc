@@ -123,6 +123,7 @@ export ZSH=~/.oh-my-zsh
 ZSH_DISABLE_COMPFIX="true"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
+ZSH_PLUGINS+=(ansible colored-man-pages colorize common-aliases copybuffer copydir copyfile docker encode64 extract git jsontools ng node npm pip redis-cli screen sudo urltools vagrant vscode web-search zsh-autosuggestions)
 set -A plugins ${(v)ZSH_PLUGINS}
 
 source $ZSH/oh-my-zsh.sh
