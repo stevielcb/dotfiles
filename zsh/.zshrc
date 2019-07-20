@@ -151,6 +151,7 @@ fi
 alias ll="exa -l --git --time-style=long-iso --group-directories-first"
 alias l="exa -la --git --time-style=long-iso --group-directories-first"
 alias la="exa -lahg --git --time-style=long-iso --group-directories-first"
+alias m="motd-client"
 
 ################################################################################
 # Functions
