@@ -137,6 +137,9 @@ ZSH_PLUGINS+=(
   encode64
   extract
   git
+  gitignore
+  golang
+  iterm2
   jsontools
   ng
   node
@@ -172,6 +175,8 @@ if ! [ -f ~/.giphy-api ]; then
 else
   GIPHY_API_KEY=$(cat ~/.giphy-api)
 fi
+
+[[ -f ~/.iterm2_shell_integration.zsh ]] && source ~/.iterm2_shell_integration.zsh
 
 ################################################################################
 # Aliases
