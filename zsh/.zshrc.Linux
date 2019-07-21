@@ -254,8 +254,13 @@ alias ss="sudo --preserve-env=HOME -s"
 ################################################################################
 
 ZSH_PLUGINS+=(
-  debian
+  systemd
 )
+
+egrep -i 'ubuntu' /etc/os-release && ZSH_PLUGINS+=(ubuntu ufw)
+egrep -i 'fedora' /etc/os-release && ZSH_PLUGINS+=(dnf)
+egrep -i 'centos' /etc/os-release && ZSH_PLUGINS+=(yum)
+egrep -i '(arch|manjaro)' /etc/os-release && ZSH_PLUGINS+=(archlinux)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 egrep -i "(alpine|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
