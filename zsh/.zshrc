@@ -128,7 +128,6 @@ COMPLETION_WAITING_DOTS="true"
 ZSH_PLUGINS+=(
   ansible
   colored-man-pages
-  colorize
   common-aliases
   copybuffer
   copydir
@@ -178,10 +177,14 @@ fi
 
 [[ -f ~/.iterm2_shell_integration.zsh ]] && source ~/.iterm2_shell_integration.zsh
 
+BAT_THEME="Monokai Extended Origin"
+
 ################################################################################
 # Aliases
 ################################################################################
 
+alias b="bat -p"
+alias c="b"
 alias ll="exa -l --git --time-style=long-iso --group-directories-first"
 alias l="exa -la --git --time-style=long-iso --group-directories-first"
 alias la="exa -lahg --git --time-style=long-iso --group-directories-first"
