@@ -28,9 +28,9 @@
 PREREQS_VERSION="201907-05"
 
 function install_prereqs_linux() {
-  egrep -i '(fedora|centos)' /etc/os-release && install_prereqs_linux_redhat
-  egrep -i 'ubuntu' /etc/os-release && install_prereqs_linux_ubuntu
-  egrep -i '(arch|manjaro)' /etc/os-release && install_prereqs_linux_arch
+  egrep -i '(fedora|centos)' /etc/os-release >/dev/null && install_prereqs_linux_redhat
+  egrep -i 'ubuntu' /etc/os-release >/dev/null && install_prereqs_linux_ubuntu
+  egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && install_prereqs_linux_arch
 
   # Update build # to prevent the prereq check happening too often
   echo -n "${PREREQS_VERSION}" > ${PREREQS}
@@ -257,10 +257,10 @@ ZSH_PLUGINS+=(
   systemd
 )
 
-egrep -i 'ubuntu' /etc/os-release && ZSH_PLUGINS+=(ubuntu ufw)
-egrep -i 'fedora' /etc/os-release && ZSH_PLUGINS+=(dnf)
-egrep -i 'centos' /etc/os-release && ZSH_PLUGINS+=(yum)
-egrep -i '(arch|manjaro)' /etc/os-release && ZSH_PLUGINS+=(archlinux)
+egrep -i 'ubuntu' /etc/os-release >/dev/null && ZSH_PLUGINS+=(ubuntu ufw)
+egrep -i 'fedora' /etc/os-release >/dev/null && ZSH_PLUGINS+=(dnf)
+egrep -i 'centos' /etc/os-release >/dev/null && ZSH_PLUGINS+=(yum)
+egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && ZSH_PLUGINS+=(archlinux)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 egrep -i "(alpine|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
