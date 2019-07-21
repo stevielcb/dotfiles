@@ -190,6 +190,7 @@ function install_prereqs_linux_arch() {
     fortune-mod \
     fzf \
     gcc \
+    glances \
     glide \
     go-pie \
     golang-golang-x-tools \
@@ -197,6 +198,7 @@ function install_prereqs_linux_arch() {
     jq \
     ncdu \
     prettyping \
+    tldr \
     z \
     zsh-syntax-highlighting
 

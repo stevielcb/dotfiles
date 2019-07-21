@@ -10,13 +10,16 @@ PREREQS_VERSION="201907-05"
 
 function install_prereqs_darwin() {
   /usr/local/bin/brew install \
+    ack \
     bat \
     cask \
     cmake \
+    csvkit \
     diff-so-fancy \
     exa \
     fortune \
     fzf \
+    glances \
     glide \
     go \
     grip \
@@ -29,6 +32,7 @@ function install_prereqs_darwin() {
     prettyping \
     rust \
     stow \
+    tldr \
     vim \
     z \
     zsh-syntax-highlighting
