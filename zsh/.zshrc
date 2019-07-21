@@ -187,6 +187,7 @@ export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(vim {})+abort'"
 
 alias b="bat -p"
 alias c="b"
+alias du="ncdu -rex --color dark"
 alias f="fzf --preview 'bat -p --color=always {}'"
 alias ll="exa -l --git --time-style=long-iso --group-directories-first"
 alias l="exa -la --git --time-style=long-iso --group-directories-first"

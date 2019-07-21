@@ -195,6 +195,7 @@ function install_prereqs_linux_arch() {
     golang-golang-x-tools \
     htop \
     jq \
+    ncdu \
     prettyping \
     z \
     zsh-syntax-highlighting

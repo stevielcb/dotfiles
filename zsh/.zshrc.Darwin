@@ -21,6 +21,7 @@ function install_prereqs_darwin() {
     go \
     grip \
     htop \
+    ncdu \
     node \
     npm \
     packer \
