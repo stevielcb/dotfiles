@@ -25,7 +25,7 @@
 # 1. stow
 # 2. git
 
-PREREQS_VERSION="201907-05"
+PREREQS_VERSION="201907-06"
 
 function install_prereqs_linux() {
   egrep -i '(fedora|centos)' /etc/os-release >/dev/null && install_prereqs_linux_redhat
@@ -185,13 +185,18 @@ function install_prereqs_linux_arch() {
   echo "Installing prerequisites ..."
   sudo pacman -Syu --needed --noconfirm \
     bat \
+    diff-so-fancy \
     exa \
     fortune-mod \
+    fzf \
     gcc \
     glide \
     go-pie \
     golang-golang-x-tools \
+    htop \
     jq \
+    prettyping \
+    z \
     zsh-syntax-highlighting
 
   install_prereqs_common

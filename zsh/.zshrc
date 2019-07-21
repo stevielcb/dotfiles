@@ -151,6 +151,7 @@ ZSH_PLUGINS+=(
   vagrant
   vscode
   web-search
+  z
   zsh-autosuggestions
 )
 
@@ -177,7 +178,8 @@ fi
 
 [[ -f ~/.iterm2_shell_integration.zsh ]] && source ~/.iterm2_shell_integration.zsh
 
-BAT_THEME="Monokai Extended Origin"
+export BAT_THEME="Monokai Extended Origin"
+export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(vim {})+abort'"
 
 ################################################################################
 # Aliases
@@ -185,10 +187,13 @@ BAT_THEME="Monokai Extended Origin"
 
 alias b="bat -p"
 alias c="b"
+alias f="fzf --preview 'bat -p --color=always {}'"
 alias ll="exa -l --git --time-style=long-iso --group-directories-first"
 alias l="exa -la --git --time-style=long-iso --group-directories-first"
 alias la="exa -lahg --git --time-style=long-iso --group-directories-first"
 alias m="motd-client"
+alias ping="prettyping --nolegend"
+alias top="htop"
 
 ################################################################################
 # Functions
