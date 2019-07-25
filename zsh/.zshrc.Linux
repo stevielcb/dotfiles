@@ -25,7 +25,7 @@
 # 1. stow
 # 2. git
 
-PREREQS_VERSION="201907-06"
+PREREQS_VERSION="201907-07"
 
 function install_prereqs_linux() {
   egrep -i '(fedora|centos)' /etc/os-release >/dev/null && install_prereqs_linux_redhat
@@ -195,9 +195,11 @@ function install_prereqs_linux_arch() {
     go-pie \
     golang-golang-x-tools \
     htop \
+    httpie \
     jq \
     ncdu \
     prettyping \
+    ripgrep \
     tldr \
     z \
     zsh-syntax-highlighting
