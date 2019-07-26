@@ -1,3 +1,5 @@
+export LANG="en_US.UTF-8"
+
 #zmodload zsh/zprof
 
 export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:${HOME}/.iterm2:$PATH"
