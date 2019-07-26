@@ -130,23 +130,27 @@ COMPLETION_WAITING_DOTS="true"
 
 ZSH_PLUGINS+=(
   ansible
+  aws
   colored-man-pages
   common-aliases
   copybuffer
   copydir
   copyfile
+  dircycle
   docker
   encode64
   extract
   git
   gitignore
   golang
+  httpie
   iterm2
   jsontools
   ng
   node
   npm
   pip
+  python
   redis-cli
   screen
   sudo
@@ -280,14 +284,7 @@ function giphy() {
 # Login
 ################################################################################
 
-MOTD_CACHE_DIR=~/.motd \
-MOTD_CACHE_MAX_FILES=2000 \
-MOTD_GIPHY_API_KEY_FILE=~/.giphy-api \
-MOTD_GIPHY_TAGS="the simpsons:g,futurama:g,bob's burgers:g,brooklyn 99:g,rupaul:r,30 rock:g,american dad:r,key peele:r,snl:r,golden girls:g,rick and morty:r" \
-MOTD_DOWNLOAD_INTERVAL=300 \
-MOTD_CLEANUP_INTERVAL=1800 \
-  motd-server &!
-
+motd-server &!
 motd-client
 
 #zprof
