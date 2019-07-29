@@ -138,6 +138,9 @@ EOF
 
 function install_prereqs_linux_ubuntu() {
   echo "Installing prerequisites ..."
+
+  sudo add-apt-repository -y ppa:neovim-ppa/stable
+
   sudo apt install -y \
     exa \
     fortune-mod \
@@ -147,8 +150,10 @@ function install_prereqs_linux_ubuntu() {
     golang-golang-x-tools \
     libstdc++-9-dev \
     libncurses-dev \
+    neovim \
     python-dev \
     python3-dev \
+    python3-neovim \
     vim-youcompleteme \
     zsh-syntax-highlighting
 
@@ -198,11 +203,22 @@ function install_prereqs_linux_arch() {
     httpie \
     jq \
     ncdu \
+    neovim \
     prettyping \
+    python-neovim \
     ripgrep \
     tldr \
     z \
     zsh-syntax-highlighting
+
+  # LinuxBrew
+  if ! [ -d /home/linuxbrew ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+  fi
+
+  # Universal Ctags
+  /usr/local/bin/brew install \
+    --HEAD universal-ctags/universal-ctags/universal-ctags
 
   install_prereqs_common
 
@@ -237,6 +253,8 @@ function install_prereqs_linux_arch() {
   fi
 }
 
+# Ensure LinuxBrew is in the PATH before we try installing stuff
+export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
 # Check if we need to install software
 if ! [ -f ${PREREQS} ]; then

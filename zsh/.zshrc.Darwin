@@ -16,21 +16,25 @@ function install_prereqs_darwin() {
     cmake \
     csvkit \
     diff-so-fancy \
+    dos2unix \
     exa \
     fortune \
     fzf \
     glances \
     glide \
     go \
-    grip \
     htop \
     httpie \
+    iftop \
+    lastpass-cli \
     ncdu \
+    neovim \
     node \
     npm \
     packer \
     ponysay \
     prettyping \
+    pup \
     ripgrep \
     rust \
     stow \
@@ -45,6 +49,12 @@ function install_prereqs_darwin() {
   /usr/local/bin/brew cask install \
     font-firacode-nerd-font
 
+  /usr/local/bin/brew install \
+    --HEAD universal-ctags/universal-ctags/universal-ctags
+
+  # For vim-devicons fzf integration
+  cargo install devicon-lookup
+
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
 
@@ -55,6 +65,13 @@ function install_prereqs_darwin() {
       git submodule update --init --recursive && \
       python3 ./install.py ${YCM_FLAGS[@]} \
     )
+
+  # Neovim python support (for YCM)
+  pip3 install pynvim
+
+  # vim-instant-markdown
+  do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
+  /usr/local/bin/npm install -g instant-markdown-d@next
 
   install_prereqs_common
 
@@ -86,7 +103,7 @@ alias ss="sudo -Es"
 ################################################################################
 
 export GOPATH="${HOME}/go"
-export PATH="${GOPATH}/bin:${PATH}"
+export PATH="${GOPATH}/bin:${HOME}/.cargo/bin:${PATH}"
 
 ZSH_PLUGINS+=(
   brew

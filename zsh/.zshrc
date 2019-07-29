@@ -2,7 +2,7 @@ export LANG="en_US.UTF-8"
 
 #zmodload zsh/zprof
 
-export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:${HOME}/.iterm2:$PATH"
+export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:${HOME}/.iterm2:/usr/local/sbin:$PATH"
 for USERBIN in ~/bin ~/go/bin; do
   mkdir -p ${USERBIN}
 done
@@ -58,6 +58,42 @@ function install_prereqs_common() {
   # vim-json
   do_git_update ~/.vim/bundle/vim-json https://github.com/elzr/vim-json
 
+  # NERDTree
+  do_git_update ~/.vim/bundle/nerdtree https://github.com/scrooloose/nerdtree
+
+  # NERDTree git plugin
+  do_git_update ~/.vim/bundle/nerdtree-git-plugin https://github.com/Xuyuanp/nerdtree-git-plugin
+
+  # The NERD Commenter
+  do_git_update ~/.vim/bundle/nerdcommenter https://github.com/scrooloose/nerdcommenter
+
+  # Tabular
+  do_git_update ~/.vim/bundle/tabular https://github.com/godlygeek/tabular
+
+  # Emmet-vim
+  do_git_update ~/.vim/bundle/emmet-vim https://github.com/mattn/emmet-vim
+
+  # vim-gitgutter
+  do_git_update ~/.vim/bundle/vim-gitgutter https://github.com/airblade/vim-gitgutter
+
+  # indentLine
+  #do_git_update ~/.vim/bundle/indentLine https://github.com/Yggdroot/indentLine
+
+  # Indent Guides
+  do_git_update ~/.vim/bundle/vim-indent-guides https://github.com/nathanaelkane/vim-indent-guides
+
+  # fzf.vim
+  do_git_update ~/.vim/bundle/fzf.vim https://github.com/junegunn/fzf.vim
+
+  # Tagbar
+  do_git_update ~/.vim/bundle/tagbar https://github.com/majutsushi/tagbar
+
+  # VimDevIcons
+  do_git_update ~/.vim/bundle/vim-devicons https://github.com/ryanoasis/vim-devicons
+  
+  # PaperColor Theme
+  do_git_update ~/.vim/bundle/papercolor-theme https://github.com/NLKNguyen/papercolor-theme
+
   # iTerm2 Shell Integration
   if ! [ -f ~/.iterm2_shell_integration.zsh ]; then
     get_it_gurr https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash
@@ -71,6 +107,16 @@ function install_prereqs_common() {
       echo "Downloading ${U} ..."
       get_it_gurr "https://iterm2.com/utilities/${U}" > ~/.iterm2/${U} && chmod +x ~/.iterm2/${U}
     done
+  fi
+
+  # Neovim auto-sourcing .vimrc + .vim
+  if ! [ -f ~/.config/nvim/init.vim ]; then
+    mkdir -p ~/.config/nvim;
+    cat > ~/.config/nvim/init.vim << "EOF"
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+source ~/.vimrc
+EOF
   fi
 }
 
@@ -174,7 +220,9 @@ source ${ZSH_SYNTAX}
 # User configuration
 ################################################################################
 
-export VISUAL="vim"
+cmd_exists nvim && NVIM=$(which nvim)
+
+export VISUAL="${NVIM:-vim}"
 export EDITOR="${VISUAL}"
 [ "${USER}" != "root" ] && export DEFAULT_USER="${USER}"
 
@@ -188,7 +236,8 @@ fi
 [[ -f ~/.iterm2_shell_integration.zsh ]] && source ~/.iterm2_shell_integration.zsh
 
 export BAT_THEME="Monokai Extended Origin"
-export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(vim {})+abort'"
+export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(${VISUAL} {})+abort'"
+export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*'"
 
 ################################################################################
 # Aliases
@@ -203,6 +252,9 @@ alias ldir="exa -lahg --git --time-style=long-iso --only-dirs --icons"
 alias l="exa -la --git --time-style=long-iso --group-directories-first --icons"
 alias la="exa -lahg --git --time-style=long-iso --group-directories-first --icons"
 alias ll="exa -l --git --time-style=long-iso --group-directories-first --icons"
+alias lp="lpass show -c --password \$(lpass ls | fzf | awk '{print \$(NF)}' | sed 's/\]//g')"
+alias lpn="lpass show -c --notes \$(lpass ls | fzf | awk '{print \$(NF)}' | sed 's/\]//g')"
+alias lpu="lpass show -c --username \$(lpass ls | fzf | awk '{print \$(NF)}' | sed 's/\]//g')"
 alias lsize="l -ssize"
 alias m="motd-client"
 alias ping="prettyping --nolegend"
@@ -280,6 +332,24 @@ function giphy() {
       jq -r '.data.images.original.url' \
     ) | \
     imgcat
+}
+
+# Have to store real path to command since our function needs to call it and not
+# end up in a recursive loop calling itself
+REAL_VIM=$(which ${VISUAL})
+# This override function causes vim to open the real file path when opening symlinks.
+# That is so that the vim plugins can get the git info for a file when the symlink exists
+# outside of the repo dir.
+function vim() {
+  # macOS needs coreutils' greadlink because the built-in version doesn't support '-f'
+  cmd_exists greadlink && RL=greadlink || RL=readlink
+
+  ARGS=()
+  for f in $*; do
+    [[ -h ${f} ]] && ARGS+=(`${RL} -f ${f}`) || ARGS+=($f)
+  done
+
+  ${REAL_VIM} ${ARGS[@]}
 }
 
 ################################################################################
