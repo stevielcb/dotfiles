@@ -6,7 +6,7 @@
 # https://brew.sh/
 # And you'll also need stow already, obviously: `brew install stow`
 
-PREREQS_VERSION="201907-06"
+PREREQS_VERSION="201907-07"
 
 function install_prereqs_darwin() {
   /usr/local/bin/brew install \
