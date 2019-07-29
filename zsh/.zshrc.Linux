@@ -208,6 +208,7 @@ function install_prereqs_linux_arch() {
     python-neovim \
     ripgrep \
     tldr \
+    unzip \
     z \
     zsh-syntax-highlighting
 
@@ -217,7 +218,7 @@ function install_prereqs_linux_arch() {
   fi
 
   # Universal Ctags
-  /usr/local/bin/brew install \
+  brew install \
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
   install_prereqs_common
@@ -290,6 +291,7 @@ egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && ZSH_PLUGINS+=(archlinux)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 egrep -i "(alpine|arch|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+egrep -i "(arch)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_COLORIZE_STYLE="friendly"
