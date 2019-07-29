@@ -289,7 +289,7 @@ egrep -i 'centos' /etc/os-release >/dev/null && ZSH_PLUGINS+=(yum)
 egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && ZSH_PLUGINS+=(archlinux)
 
 ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-egrep -i "(alpine|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+egrep -i "(alpine|arch|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_COLORIZE_STYLE="friendly"
