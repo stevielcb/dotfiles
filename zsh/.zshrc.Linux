@@ -205,6 +205,7 @@ function install_prereqs_linux_arch() {
     ncdu \
     neovim \
     prettyping \
+    python-docutils \
     python-neovim \
     ripgrep \
     tldr \
