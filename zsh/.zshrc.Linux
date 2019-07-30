@@ -190,6 +190,7 @@ function install_prereqs_linux_arch() {
   echo "Installing prerequisites ..."
   sudo pacman -Syu --needed --noconfirm \
     bat \
+    datamash \
     diff-so-fancy \
     exa \
     fortune-mod \
@@ -207,6 +208,7 @@ function install_prereqs_linux_arch() {
     prettyping \
     python-docutils \
     python-neovim \
+    python-psycopg2 \
     ripgrep \
     tldr \
     unzip \
@@ -222,10 +224,20 @@ function install_prereqs_linux_arch() {
   brew install \
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
+  # Python packages
+  sudo pip install -U \
+    mycli \
+    pgcli \
+    saws
+
   install_prereqs_common
 
+  # MOTD server+client
   go get -u github.com/stevenwoah/motd-server
   go get -u github.com/stevenwoah/motd-client
+
+  # Sift
+  go get -u github.com/svent/sift
 
   # FiraCode Nerd Fonts for Powerlevel10k
   FC_FONT="${HOME}/.fonts/Fura Code Bold Nerd Font Complete.ttf"

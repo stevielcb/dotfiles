@@ -15,6 +15,7 @@ function install_prereqs_darwin() {
     cask \
     cmake \
     csvkit \
+    datamash \
     diff-so-fancy \
     dos2unix \
     exa \
@@ -27,11 +28,13 @@ function install_prereqs_darwin() {
     httpie \
     iftop \
     lastpass-cli \
+    mycli \
     ncdu \
     neovim \
     node \
     npm \
     packer \
+    pgcli \
     ponysay \
     prettyping \
     pup \
@@ -54,6 +57,13 @@ function install_prereqs_darwin() {
 
   # For vim-devicons fzf integration
   cargo install devicon-lookup
+
+  # MOTD server+client
+  go get -u github.com/stevenwoah/motd-server
+  go get -u github.com/stevenwoah/motd-client
+
+  # Sift
+  go get -u github.com/svent/sift
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
