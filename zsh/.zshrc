@@ -123,6 +123,46 @@ EOF
 source ~/.zshrc.$(uname)
 
 ################################################################################
+# User configuration
+################################################################################
+
+cmd_exists nvim && NVIM=$(which nvim)
+
+export VISUAL="${NVIM:-vim}"
+export EDITOR="${VISUAL}"
+[ "${USER}" != "root" ] && export DEFAULT_USER="${USER}"
+
+if ! [ -f ~/.giphy-api ]; then
+  vared -p "Please enter your Giphy.com API key: " -c GIPHY_API_KEY
+  echo -n "${GIPHY_API_KEY}" > ~/.giphy-api
+else
+  GIPHY_API_KEY=$(cat ~/.giphy-api)
+fi
+
+[[ -f ~/.iterm2_shell_integration.zsh ]] && source ~/.iterm2_shell_integration.zsh
+
+export BAT_THEME="Monokai Extended Origin"
+
+###############
+##### fzf #####
+###############
+# Install fuzzy completion if it hasn't been done yet, but only for brewers
+[ ! -f ~/.fzf.zsh ] && (( $+commands[brew] )) && $(brew --prefix)/opt/fzf/install
+# Source fuzzy completion if it's there
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# CTRL+O will open the selected file in an editor
+export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(${VISUAL} {})+abort'"
+# Make sure to include hidden files but I don't care about .git or its children
+# https://i.kym-cdn.com/photos/images/original/001/080/653/288.png
+export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*'"
+
+###############
+#### tmux #####
+###############
+ZSH_TMUX_AUTOSTART=true
+ZSH_TMUX_ITERM2=true
+
+################################################################################
 # powerlevel9k + 10k
 ################################################################################
 
@@ -202,6 +242,7 @@ ZSH_PLUGINS+=(
   redis-cli
   screen
   sudo
+  tmux
   urltools
   vagrant
   vscode
@@ -215,29 +256,6 @@ set -A plugins ${(v)ZSH_PLUGINS}
 source $ZSH/oh-my-zsh.sh
 
 source ${ZSH_SYNTAX}
-
-################################################################################
-# User configuration
-################################################################################
-
-cmd_exists nvim && NVIM=$(which nvim)
-
-export VISUAL="${NVIM:-vim}"
-export EDITOR="${VISUAL}"
-[ "${USER}" != "root" ] && export DEFAULT_USER="${USER}"
-
-if ! [ -f ~/.giphy-api ]; then
-  vared -p "Please enter your Giphy.com API key: " -c GIPHY_API_KEY
-  echo -n "${GIPHY_API_KEY}" > ~/.giphy-api
-else
-  GIPHY_API_KEY=$(cat ~/.giphy-api)
-fi
-
-[[ -f ~/.iterm2_shell_integration.zsh ]] && source ~/.iterm2_shell_integration.zsh
-
-export BAT_THEME="Monokai Extended Origin"
-export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(${VISUAL} {})+abort'"
-export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*'"
 
 ################################################################################
 # Aliases

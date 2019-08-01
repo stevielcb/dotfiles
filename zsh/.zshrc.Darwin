@@ -41,7 +41,9 @@ function install_prereqs_darwin() {
     ripgrep \
     rust \
     stow \
+    termshark \
     tldr \
+    tmux \
     vim \
     z \
     zsh-syntax-highlighting
@@ -65,6 +67,12 @@ function install_prereqs_darwin() {
   # Sift
   go get -u github.com/svent/sift
 
+  # Wuzz - interactive HTTP inspection
+  go get -u github.com/asciimoo/wuzz
+
+  # Tmuxinator
+  sudo gem install tmuxinator
+
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
 
@@ -77,7 +85,10 @@ function install_prereqs_darwin() {
     )
 
   # Neovim python support (for YCM)
-  pip3 install pynvim
+  pip3 install -U pynvim
+
+  # Supercharged AWS
+  pip3 install -U saws
 
   # vim-instant-markdown
   do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
@@ -119,6 +130,7 @@ ZSH_PLUGINS+=(
   brew
   cask
   osx
+  tmuxinator
 )
 
 ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
