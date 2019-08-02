@@ -63,6 +63,7 @@ command! -bang -nargs=* Rgh call fzf#vim#grep("rg --hidden --glob '!.git/*' --co
 """"""""""" User keymappings
 nnoremap <silent> <Leader>ft :call ToggleFileFormat()<CR>
 nnoremap <silent> <Leader>Q :q!<CR>
+nnoremap <silent> <Leader>d :silent exec "!tmux detach"<CR>
 " Quit if only 1 buffer, otherwise delete current buffer
 nnoremap <silent> <expr> <Leader>q (OneBuf() ? ":q\<CR>" : ":bd\<CR>")
 " Write shortcuts
