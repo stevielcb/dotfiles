@@ -146,7 +146,9 @@ export BAT_THEME="Monokai Extended Origin"
 ###############
 #### tmux #####
 ###############
-ZSH_TMUX_AUTOSTART=true
+if ! (( ${+SSH_CLIENT} )); then
+  ZSH_TMUX_AUTOSTART=true
+fi
 ZSH_TMUX_ITERM2=true
 
 ################################################################################
