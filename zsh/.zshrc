@@ -374,7 +374,9 @@ function vim() {
 # Login
 ################################################################################
 
-motd-server &!
-motd-client
+# Only start motd-server when you aren't in an SSH session
+(( ${+SSH_CLIENT} )) && motd-server &!
+# Only run motd-client if motd-server is detected
+pgrep motd-server 2>&1 >/dev/null && motd-client
 
 #zprof
