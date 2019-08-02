@@ -147,9 +147,9 @@ export BAT_THEME="Monokai Extended Origin"
 #### tmux #####
 ###############
 if ! (( ${+SSH_CLIENT} )); then
-  ZSH_TMUX_AUTOSTART=true
+  ZSH_TMUX_ITERM2=true
 fi
-ZSH_TMUX_ITERM2=true
+ZSH_TMUX_AUTOSTART=true
 
 ################################################################################
 # powerlevel9k + 10k
