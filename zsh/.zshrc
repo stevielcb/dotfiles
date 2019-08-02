@@ -90,7 +90,7 @@ function install_prereqs_common() {
 
   # VimDevIcons
   do_git_update ~/.vim/bundle/vim-devicons https://github.com/ryanoasis/vim-devicons
-  
+
   # PaperColor Theme
   do_git_update ~/.vim/bundle/papercolor-theme https://github.com/NLKNguyen/papercolor-theme
 
