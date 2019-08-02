@@ -144,19 +144,6 @@ fi
 export BAT_THEME="Monokai Extended Origin"
 
 ###############
-##### fzf #####
-###############
-# Install fuzzy completion if it hasn't been done yet, but only for brewers
-[ ! -f ~/.fzf.zsh ] && (( $+commands[brew] )) && $(brew --prefix)/opt/fzf/install
-# Source fuzzy completion if it's there
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-# CTRL+O will open the selected file in an editor
-export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(${VISUAL} {})+abort'"
-# Make sure to include hidden files but I don't care about .git or its children
-# https://i.kym-cdn.com/photos/images/original/001/080/653/288.png
-export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*' 2>/dev/null"
-
-###############
 #### tmux #####
 ###############
 ZSH_TMUX_AUTOSTART=true
@@ -369,6 +356,25 @@ function vim() {
 
   ${REAL_VIM} ${ARGS[@]}
 }
+
+################################################################################
+# fzf
+################################################################################
+
+# Install fuzzy completion if it hasn't been done yet, but only for brewers
+if [ -d /usr/share/fzf ]; then
+  source /usr/share/fzf/completion.zsh;
+  source /usr/share/fzf/key-bindings.zsh;
+else
+  [ ! -f ~/.fzf.zsh ] && (( $+commands[brew] )) && $(brew --prefix)/opt/fzf/install
+  # Source fuzzy completion if it's there
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+fi
+# CTRL+O will open the selected file in an editor
+export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(${VISUAL} {})+abort'"
+# Make sure to include hidden files but I don't care about .git or its children
+# https://i.kym-cdn.com/photos/images/original/001/080/653/288.png
+export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*' 2>/dev/null"
 
 ################################################################################
 # Login
