@@ -1,8 +1,8 @@
 set encoding=utf-8
 execute pathogen#infect()
 
-if !has("nvim")
-  set term=xterm-256color
+if (has("termguicolors"))
+  set termguicolors
 endif
 
 if executable("lsb_release")
@@ -177,3 +177,6 @@ colorscheme PaperColor
 " Jump to previous position when opening a file
 " https://askubuntu.com/a/202077
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+" vim-json
+let g:vim_json_syntax_conceal = 0

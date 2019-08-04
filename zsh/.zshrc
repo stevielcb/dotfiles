@@ -94,6 +94,39 @@ function install_prereqs_common() {
   # PaperColor Theme
   do_git_update ~/.vim/bundle/papercolor-theme https://github.com/NLKNguyen/papercolor-theme
 
+  # tmux plugin manager
+  do_git_update ~/.tmux/plugins/tpm https://github.com/tmux-plugins/tpm
+
+  # tmux sensible
+  do_git_update ~/.tmux/plugins/tmux-sensible https://github.com/tmux-plugins/tmux-sensible
+
+  # tmux resurrect
+  do_git_update ~/.tmux/plugins/tmux-resurrect https://github.com/tmux-plugins/tmux-resurrect
+
+  # tmux continuum
+  do_git_update ~/.tmux/plugins/tmux-continuum https://github.com/tmux-plugins/tmux-continuum
+
+  # tmux copycat
+  do_git_update ~/.tmux/plugins/tmux-copycat https://github.com/tmux-plugins/tmux-copycat
+
+  # tmux urlview
+  do_git_update ~/.tmux/plugins/tmux-urlview https://github.com/tmux-plugins/tmux-urlview
+
+  # tmux vim focus events
+	do_git_update ~/.vim/bundle/vim-tmux-focus-events https://github.com/tmux-plugins/vim-tmux-focus-events
+
+  # tmux "pain" control
+  do_git_update ~/.tmux/plugins/tmux-pain-control https://github.com/tmux-plugins/tmux-pain-control
+
+  # tmux sessionist
+  do_git_update ~/.tmux/plugins/tmux-sessionist https://github.com/tmux-plugins/tmux-sessionist
+
+  # tmux better mouse mode
+  do_git_update ~/.tmux/plugins/tmux-better-mouse-mode https://github.com/NHDaly/tmux-better-mouse-mode
+
+  # tmux taskwarrior
+  do_git_update ~/.tmux/plugins/tmux-tasks https://github.com/chriszarate/tmux-tasks
+
   # iTerm2 Shell Integration
   if ! [ -f ~/.iterm2_shell_integration.zsh ]; then
     get_it_gurr https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash
@@ -146,9 +179,9 @@ export BAT_THEME="Monokai Extended Origin"
 ###############
 #### tmux #####
 ###############
-if ! (( ${+SSH_CLIENT} )); then
-  ZSH_TMUX_ITERM2=true
-fi
+# if ! (( ${+SSH_CLIENT} )); then
+  # ZSH_TMUX_ITERM2=true
+# fi
 ZSH_TMUX_AUTOSTART=true
 
 ################################################################################
@@ -156,12 +189,11 @@ ZSH_TMUX_AUTOSTART=true
 ################################################################################
 
 POWERLEVEL9K_MODE="nerdfont-complete"
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(status os_icon load ram newline context dir vcs)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(status context dir vcs)
 POWERLEVEL9K_HIDE_BRANCH_ICON=true
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
 POWERLEVEL9K_SHORTEN_DELIMITER=""
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
 POWERLEVEL9K_LOAD_NORMAL_BACKGROUND='113'
 POWERLEVEL9K_LOAD_WARNING_BACKGROUND='221'
@@ -265,6 +297,7 @@ alias lpu="lpass show -c --username \$(lpass ls | fzf | awk '{print \$(NF)}' | s
 alias lsize="l -ssize"
 alias m="motd-client"
 alias ping="prettyping --nolegend"
+alias td="tmux detach"
 alias top="htop"
 
 ################################################################################
@@ -382,9 +415,9 @@ export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*' 2>
 # Login
 ################################################################################
 
-# Only start motd-server when you aren't in an SSH session
-(( ${+SSH_CLIENT} )) && motd-server &!
-# Only run motd-client if motd-server is detected
-pgrep motd-server 2>&1 >/dev/null && motd-client
+# # Only start motd-server when you aren't in an SSH session
+# (( ${+SSH_CLIENT} )) && motd-server &!
+# # Only run motd-client if motd-server is detected
+# pgrep motd-server 2>&1 >/dev/null && motd-client
 
 #zprof

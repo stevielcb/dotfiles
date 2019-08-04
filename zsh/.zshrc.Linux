@@ -225,6 +225,9 @@ function install_prereqs_linux_arch() {
   brew install \
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
+  brew install \
+    urlview
+
   # Python packages
   sudo pip install -U \
     mycli \
