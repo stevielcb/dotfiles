@@ -182,7 +182,7 @@ export BAT_THEME="Monokai Extended Origin"
 # if ! (( ${+SSH_CLIENT} )); then
   # ZSH_TMUX_ITERM2=true
 # fi
-ZSH_TMUX_AUTOSTART=true
+[[ $(whoami) != "root" ]] && ZSH_TMUX_AUTOSTART=true
 
 ################################################################################
 # powerlevel9k + 10k
