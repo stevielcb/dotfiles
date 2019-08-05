@@ -76,6 +76,9 @@ function install_prereqs_common() {
   # vim-gitgutter
   do_git_update ~/.vim/bundle/vim-gitgutter https://github.com/airblade/vim-gitgutter
 
+  # vim-obsession
+  do_git_update ~/.vim/bundle/vim-obsession https://github.com/tpope/vim-obsession
+
   # indentLine
   #do_git_update ~/.vim/bundle/indentLine https://github.com/Yggdroot/indentLine
 
@@ -113,7 +116,7 @@ function install_prereqs_common() {
   do_git_update ~/.tmux/plugins/tmux-urlview https://github.com/tmux-plugins/tmux-urlview
 
   # tmux vim focus events
-	do_git_update ~/.vim/bundle/vim-tmux-focus-events https://github.com/tmux-plugins/vim-tmux-focus-events
+  do_git_update ~/.vim/bundle/vim-tmux-focus-events https://github.com/tmux-plugins/vim-tmux-focus-events
 
   # tmux "pain" control
   do_git_update ~/.tmux/plugins/tmux-pain-control https://github.com/tmux-plugins/tmux-pain-control
@@ -126,6 +129,9 @@ function install_prereqs_common() {
 
   # tmux taskwarrior
   do_git_update ~/.tmux/plugins/tmux-tasks https://github.com/chriszarate/tmux-tasks
+
+  # tmux extracto
+  do_git_update ~/.tmux/plugins/extracto https://github.com/laktak/extrakto
 
   # iTerm2 Shell Integration
   if ! [ -f ~/.iterm2_shell_integration.zsh ]; then
@@ -421,5 +427,11 @@ export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*' 2>
 # (( ${+SSH_CLIENT} )) && motd-server &!
 # # Only run motd-client if motd-server is detected
 # pgrep motd-server 2>&1 >/dev/null && motd-client
+
+# Show some ponies, but only if there's room
+TERM_HEIGHT=$(tput lines)
+if [ $TERM_HEIGHT -gt 20 ]; then
+  fortune | ponysay
+fi
 
 #zprof
