@@ -133,6 +133,7 @@
   "Default Bookmark": "No", 
   "Description": "Default", 
   "Disable Window Resizing": true, 
+  "Draw Powerline Glyphs": false, 
   "Flashing Bell": false, 
   "Foreground Color": {
     "Blue Component": 0.7333333492279053, 
@@ -144,6 +145,7 @@
   "Horizontal Spacing": 1, 
   "Icon": 1, 
   "Idle Code": 0, 
+  "Initial Text": "", 
   "Jobs to Ignore": [
     "rlogin", 
     "ssh", 
@@ -246,6 +248,30 @@
     "0x39-0x200000": {
       "Action": 12, 
       "Text": "9"
+    }, 
+    "0x65-0x100000": {
+      "Action": 11, 
+      "Text": "0x02 0x64"
+    }, 
+    "0x74-0x100000": {
+      "Action": 11, 
+      "Text": "0x02 0x63"
+    }, 
+    "0x77-0x100000": {
+      "Action": 11, 
+      "Text": "0x02 0x26"
+    }, 
+    "0x78-0x100000": {
+      "Action": 11, 
+      "Text": "0x02 0x78"
+    }, 
+    "0x7b-0x120000": {
+      "Action": 11, 
+      "Text": "0x02 0x10"
+    }, 
+    "0x7d-0x120000": {
+      "Action": 11, 
+      "Text": "0x02 0x0e"
     }, 
     "0x7f-0x100000": {
       "Action": 11, 
@@ -409,8 +435,65 @@
   "Send Code When Idle": false, 
   "Session Close Undo Timeout": 10, 
   "Shortcut": "", 
-  "Show Status Bar": true, 
+  "Show Status Bar": false, 
   "Silence Bell": false, 
+  "Smart Selection Rules": [
+    {
+      "notes": "Word bounded by whitespace", 
+      "precision": "low", 
+      "regex": "\\S+"
+    }, 
+    {
+      "notes": "C++ namespace::identifier", 
+      "precision": "normal", 
+      "regex": "([a-zA-Z0-9_]+::)+[a-zA-Z0-9_]+"
+    }, 
+    {
+      "notes": "Paths", 
+      "precision": "normal", 
+      "regex": "\\~?/?([[:letter:][:number:]._-]+/+)+[[:letter:][:number:]._-]+/?"
+    }, 
+    {
+      "notes": "Quoted string", 
+      "precision": "normal", 
+      "regex": "@?\"(?:[^\"\\\\]|\\\\.)*\""
+    }, 
+    {
+      "notes": "Java/Python include paths", 
+      "precision": "normal", 
+      "regex": "([[:letter:][:number:]._]+\\.)+[[:letter:][:number:]._]+"
+    }, 
+    {
+      "notes": "mailto URL", 
+      "precision": "normal", 
+      "regex": "\\bmailto:([a-z0-9A-Z_]+@)?([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\b"
+    }, 
+    {
+      "notes": "Obj-C selector", 
+      "precision": "high", 
+      "regex": "@selector\\([^)]+\\)"
+    }, 
+    {
+      "notes": "email address", 
+      "precision": "high", 
+      "regex": "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}\\b"
+    }, 
+    {
+      "notes": "HTTP URL", 
+      "precision": "very_high", 
+      "regex": "https?://([a-z0-9A-Z]+(:[a-zA-Z0-9]+)?@)?([a-z0-9A-Z][-a-z0-9A-Z]*\\.)+[A-Za-z][-A-Za-z]*((:[0-9]+)?)(/[a-zA-Z0-9;/\\.\\-_+%?&@=#\\(\\)~]*)?"
+    }, 
+    {
+      "notes": "SSH URL", 
+      "precision": "very_high", 
+      "regex": "\\bssh:([a-z0-9A-Z_]+@)?([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\b"
+    }, 
+    {
+      "notes": "Telnet URL", 
+      "precision": "very_high", 
+      "regex": "\\btelnet:([a-z0-9A-Z_]+@)?([a-zA-Z0-9\\-]+\\.)*[a-zA-Z0-9\\-]+\\b"
+    }
+  ], 
   "Space": 0, 
   "Status Bar Layout": {
     "advanced configuration": {
