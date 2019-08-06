@@ -54,8 +54,10 @@ EOF
     golang \
     libstdc++-devel \
     ncurses-devel \
+    neovim \
     python-devel \
     python36-devel \
+    python36-neovim \
     zsh-syntax-highlighting
 
   # Make sure we have GhettoForge
@@ -67,17 +69,6 @@ EOF
   sudo yum install -y \
     --enablerepo=gf-plus \
     zsh
-
-  # SourceCodePro+Powerline+Awesome Font for Powerlevel10k
-  PA_FONT=~/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf
-  if ! [ -f ${PA_FONT} ]; then
-    mkdir -p ~/.fonts
-    curl -Lq \
-      https://github.com/Falkor/dotfiles/raw/master/fonts/SourceCodePro%2BPowerline%2BAwesome%2BRegular.ttf \
-      > ${PA_FONT}
-    fc-cache -v
-    fc-cache-64 -v
-  fi
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
@@ -103,35 +94,16 @@ EOF
       /bin/mv -f ./target/release/exa ~/bin/ )
   fi
 
-  # vim8
-  if ! [ -d ~/.local/vim ]; then
-    git clone https://github.com/vim/vim.git ~/vim && \
-      cd ~/vim && \
-      ./configure \
-        --disable-darwin \
-        --disable-nls \
-        --enable-cscope \
-        --enable-gui=no \
-        --enable-multibyte  \
-        --enable-python3interp \
-        --enable-rubyinterp \
-        --prefix=${HOME}/.local/vim \
-        --with-features=huge  \
-        --with-python-config-dir=/usr/lib/python3.6/config \
-        --with-tlib=ncurses \
-        --without-x && \
-      make && \
-      make install
-  fi
-
   # YouCompleteMe
-  YCM_FLAGS=(--clang-completer --go-completer --rust-completer)
-  do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
-    ( cd ~/.vim/bundle/YouCompleteMe && \
-      git submodule update --init --recursive && \
-      source /opt/rh/devtoolset-8/enable && \
-      python3 ./install.py ${YCM_FLAGS[@]} \
-    )
+  if ! [ -d ~/.vim/bundle/YouCompleteMe ]; then
+    YCM_FLAGS=(--clang-completer --go-completer --rust-completer)
+    do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
+      ( cd ~/.vim/bundle/YouCompleteMe && \
+        git submodule update --init --recursive && \
+        source /opt/rh/devtoolset-8/enable && \
+        python3 ./install.py ${YCM_FLAGS[@]} \
+      )
+  fi
 
   install_prereqs_common
 }

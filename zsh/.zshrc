@@ -14,7 +14,7 @@ done
 PREREQS=~/.dotfiles-prerequisites
 
 function cmd_exists() {
-  return `which $1 >/dev/null`
+  return `which $1 2>&1 >/dev/null`
 }
 
 function get_it_gurr() {
