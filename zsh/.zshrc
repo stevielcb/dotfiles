@@ -130,6 +130,9 @@ function install_prereqs_common() {
   # tmux taskwarrior
   do_git_update ~/.tmux/plugins/tmux-tasks https://github.com/chriszarate/tmux-tasks
 
+  # tmux prefix highlight
+  do_git_update ~/.tmux/plugins/tmux-prefix-highlight https://github.com/tmux-plugins/tmux-prefix-highlight
+
   # tmux extracto
   do_git_update ~/.tmux/plugins/extracto https://github.com/laktak/extrakto
 
