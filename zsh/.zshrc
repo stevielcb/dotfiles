@@ -134,7 +134,7 @@ function install_prereqs_common() {
   do_git_update ~/.tmux/plugins/tmux-prefix-highlight https://github.com/tmux-plugins/tmux-prefix-highlight
 
   # tmux extracto
-  do_git_update ~/.tmux/plugins/extracto https://github.com/laktak/extrakto
+  do_git_update ~/.tmux/plugins/extrakto https://github.com/laktak/extrakto
 
   # iTerm2 Shell Integration
   if ! [ -f ~/.iterm2_shell_integration.zsh ]; then
