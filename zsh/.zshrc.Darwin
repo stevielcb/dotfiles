@@ -11,6 +11,7 @@ PREREQS_VERSION="201907-07"
 function install_prereqs_darwin() {
   /usr/local/bin/brew install \
     ack \
+    asciiquarium \
     bat \
     cask \
     cmake \
@@ -135,7 +136,13 @@ ZSH_PLUGINS+=(
   osx
   taskwarrior
   tmuxinator
+  zsh-morpho
 )
+
+# morpho screensaver
+zstyle ":morpho" screen-saver "asciiquarium"
+zstyle ":morpho" delay "115"
+zstyle ":morpho" check-interval "60"
 
 ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
