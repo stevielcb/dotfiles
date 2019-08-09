@@ -40,6 +40,9 @@ function install_prereqs_common() {
   # zsh-autosuggestions
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
 
+  # zsh-morpho screensaver
+  do_git_update ~/.oh-my-zsh/custom/plugins/zsh-morpho https://github.com/psprint/zsh-morpho
+
   # Pathogen
   if ! [ -d ~/.vim/autoload ]; then
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
