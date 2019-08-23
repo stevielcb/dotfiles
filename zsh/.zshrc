@@ -43,6 +43,12 @@ function install_prereqs_common() {
   # zsh-morpho screensaver
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-morpho https://github.com/psprint/zsh-morpho
 
+  # zsh autopair plugin
+  do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autopair https://github.com/hlissner/zsh-autopair
+
+  # zsh fast syntax highlighting
+  do_git_update ~/.oh-my-zsh/custom/plugins/fast-syntax-highlighting https://github.com/zdharma/fast-syntax-highlighting
+
   # Pathogen
   if ! [ -d ~/.vim/autoload ]; then
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
@@ -191,9 +197,6 @@ export BAT_THEME="Monokai Extended Origin"
 ###############
 #### tmux #####
 ###############
-# if ! (( ${+SSH_CLIENT} )); then
-  # ZSH_TMUX_ITERM2=true
-# fi
 [[ $(whoami) != "root" ]] && ZSH_TMUX_AUTOSTART=true
 
 ################################################################################
@@ -263,6 +266,7 @@ ZSH_PLUGINS+=(
   docker
   encode64
   extract
+  fast-syntax-highlighting
   git
   gitignore
   golang
@@ -283,6 +287,7 @@ ZSH_PLUGINS+=(
   vscode
   web-search
   z
+  zsh-autopair
   zsh-autosuggestions
 )
 
@@ -290,7 +295,7 @@ set -A plugins ${(v)ZSH_PLUGINS}
 
 source $ZSH/oh-my-zsh.sh
 
-source ${ZSH_SYNTAX}
+#source ${ZSH_SYNTAX}
 
 ################################################################################
 # Aliases
@@ -300,6 +305,7 @@ alias b="bat -p"
 alias c="b"
 alias du="ncdu -rex --color dark"
 alias f="fzf --preview 'bat -p --color=always {}'"
+alias h="nocorrect howdoi"
 alias http="http -F --style paraiso-dark"
 alias ldir="exa -lahg --git --time-style=long-iso --only-dirs --icons"
 alias l="exa -la --git --time-style=long-iso --group-directories-first --icons"
@@ -311,6 +317,8 @@ alias lpu="lpass show -c --username \$(lpass ls | fzf | awk '{print \$(NF)}' | s
 alias lsize="l -ssize"
 alias m="motd-client"
 alias ping="prettyping --nolegend"
+alias rg="rg -p"
+alias task="nocorrect task"
 alias td="tmux detach"
 alias top="htop"
 
@@ -386,6 +394,14 @@ function giphy() {
       jq -r '.data.images.original.url' \
     ) | \
     imgcat
+}
+
+disable r;
+function r() {
+  DIM=($(tmux list-panes -F "#{pane_height} #{pane_width} #{pane_active}" | grep 1$ | awk '{print $1" "$2}'))
+  if [[ $DIM ]]; then
+    stty cols ${DIM[2]} rows ${DIM[1]}
+  fi
 }
 
 # Have to store real path to command since our function needs to call it and not

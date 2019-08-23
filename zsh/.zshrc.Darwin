@@ -11,10 +11,14 @@ PREREQS_VERSION="201907-07"
 function install_prereqs_darwin() {
   /usr/local/bin/brew install \
     ack \
+    asciinema \
     asciiquarium \
     bat \
+    bvi \
     cask \
     cmake \
+    cmatrix \
+    colordiff \
     csvkit \
     datamash \
     diff-so-fancy \
@@ -22,9 +26,11 @@ function install_prereqs_darwin() {
     exa \
     fortune \
     fzf \
+    gawk \
     glances \
     glide \
     go \
+    howdoi \
     htop \
     httpie \
     iftop \
@@ -34,6 +40,7 @@ function install_prereqs_darwin() {
     neovim \
     node \
     npm \
+    nyancat \
     packer \
     pgcli \
     ponysay \
@@ -140,11 +147,12 @@ ZSH_PLUGINS+=(
 )
 
 # morpho screensaver
-zstyle ":morpho" screen-saver "asciiquarium"
+zstyle ":morpho" screen-saver "cmatrix"
+zstyle ":morpho" arguments "-absC magenta"
 zstyle ":morpho" delay "115"
 zstyle ":morpho" check-interval "60"
 
-ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_COLORIZE_STYLE="friendly"
