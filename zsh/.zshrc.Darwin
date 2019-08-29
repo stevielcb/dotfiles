@@ -35,6 +35,7 @@ function install_prereqs_darwin() {
     httpie \
     iftop \
     lastpass-cli \
+    libmagic \
     mycli \
     ncdu \
     neovim \
