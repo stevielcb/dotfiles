@@ -27,7 +27,7 @@ function get_it_gurr() {
 
 function do_git_update() {
   if ! [ -d ${1} ]; then
-    git clone ${2} ${1}
+    git clone --depth 1 ${2} ${1}
   else
     (cd ${1} && git pull)
   fi
@@ -63,6 +63,12 @@ function install_prereqs_common() {
 
   # vim-airline-themes
   do_git_update ~/.vim/bundle/vim-airline-themes https://github.com/vim-airline/vim-airline-themes
+
+  # vim-arpeggio
+  do_git_update ~/.vim/bundle/vim-arpeggio https://github.com/kana/vim-arpeggio
+
+  # vim senshi (smart Python syntax highlighter)
+  do_git_update ~/.vim/bundle/semshi https://github.com/numirias/semshi
 
   # vim-json
   do_git_update ~/.vim/bundle/vim-json https://github.com/elzr/vim-json

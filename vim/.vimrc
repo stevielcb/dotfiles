@@ -136,6 +136,10 @@ nnoremap <silent> <expr> <Leader>ff (expand('%') =~ 'NERD_tree' ? "\<C-w>\<C-w>"
 nnoremap <silent> <expr> <Leader>fg (expand('%') =~ 'NERD_tree' ? "\<C-w>\<C-w>" : '').":GFiles\<CR>"
 nnoremap <silent> <expr> <Leader>fG (expand('%') =~ 'NERD_tree' ? "\<C-w>\<C-w>" : '').":GFiles?\<CR>"
 
+" Arpeggio
+call arpeggio#map('i', '', 0, 'jk', '<Esc>')
+call arpeggio#map('i', '', 0, 'wq', '<Esc>:wq<Enter>')
+
 " Tagbar
 if is_mac || linux_os == "Arch"
   nnoremap <silent> <expr> <Leader>t (expand('%') =~ 'Tagbar' ? ":TagbarToggle\<CR>" : ":TagbarOpen fj\<CR>")

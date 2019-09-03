@@ -92,7 +92,7 @@ function install_prereqs_darwin() {
   YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
   do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
     ( cd ~/.vim/bundle/YouCompleteMe && \
-      git submodule update --init --recursive && \
+      git submodule update --init --recursive --recommend-shallow && \
       python3 ./install.py ${YCM_FLAGS[@]} \
     )
 
