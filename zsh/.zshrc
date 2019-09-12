@@ -112,6 +112,9 @@ function install_prereqs_common() {
   # PaperColor Theme
   do_git_update ~/.vim/bundle/papercolor-theme https://github.com/NLKNguyen/papercolor-theme
 
+  # tmux vim focus events
+  do_git_update ~/.vim/bundle/vim-tmux-focus-events https://github.com/tmux-plugins/vim-tmux-focus-events
+
   # tmux plugin manager
   do_git_update ~/.tmux/plugins/tpm https://github.com/tmux-plugins/tpm
 
@@ -129,9 +132,6 @@ function install_prereqs_common() {
 
   # tmux urlview
   do_git_update ~/.tmux/plugins/tmux-urlview https://github.com/tmux-plugins/tmux-urlview
-
-  # tmux vim focus events
-  do_git_update ~/.vim/bundle/vim-tmux-focus-events https://github.com/tmux-plugins/vim-tmux-focus-events
 
   # tmux "pain" control
   do_git_update ~/.tmux/plugins/tmux-pain-control https://github.com/tmux-plugins/tmux-pain-control

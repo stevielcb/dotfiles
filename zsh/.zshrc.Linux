@@ -173,7 +173,6 @@ function install_prereqs_linux_arch() {
     glide \
     go-pie \
     golang-golang-x-tools \
-    howdoi \
     htop \
     httpie \
     jq \
@@ -182,10 +181,10 @@ function install_prereqs_linux_arch() {
     prettyping \
     python-docutils \
     python-neovim \
+    python-pip \
     python-psycopg2 \
     ripgrep \
     tldr \
-    tmux \
     unzip \
     z \
     zsh-syntax-highlighting
@@ -200,13 +199,39 @@ function install_prereqs_linux_arch() {
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
   brew install \
+    ack \
+    asciinema \
     asciiquarium \
+    bvi \
+    cask \
+    cmake \
+    cmatrix \
+    colordiff \
+    csvkit \
+    dos2unix \
+    howdoi \
+    iftop \
+    lastpass-cli \
+    libmagic \
+    libtool \
+    mycli \
+    node \
+    npm \
+    nyancat \
+    packer \
+    pgcli \
+    ponysay \
+    pup \
+    reattach-to-user-namespace \
+    rust \
+    task \
     urlview
+
+  brew install \
+    tmux --HEAD
 
   # Python packages
   sudo pip install -U \
-    mycli \
-    pgcli \
     powerline-status \
     saws
 
@@ -232,19 +257,6 @@ function install_prereqs_linux_arch() {
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
-  # ponysay
-  if ! [ -d ~/ponysay ]; then
-    ( git clone https://github.com/erkin/ponysay ~/ponysay && \
-      cd ~/ponysay && \
-      python3 setup.py --freedom=partial --private install && \
-      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
-  else
-    ( cd ~/ponysay && \
-      git pull && \
-      python3 setup.py --freedom=partial --private install && \
-      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
-  fi
 }
 
 # Ensure LinuxBrew is in the PATH before we try installing stuff
@@ -274,8 +286,17 @@ alias ss="sudo --preserve-env=HOME -s"
 ################################################################################
 
 ZSH_PLUGINS+=(
+  brew
+  cask
   systemd
+  zsh-morpho
 )
+
+# morpho screensaver
+zstyle ":morpho" screen-saver "cmatrix"
+zstyle ":morpho" arguments "-absC magenta"
+zstyle ":morpho" delay "115"
+zstyle ":morpho" check-interval "60"
 
 egrep -i 'ubuntu' /etc/os-release >/dev/null && ZSH_PLUGINS+=(ubuntu ufw)
 egrep -i 'fedora' /etc/os-release >/dev/null && ZSH_PLUGINS+=(dnf)
@@ -289,6 +310,6 @@ egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && ZSH_PLUGINS+=(archlinux)
 ZSH_THEME="powerlevel10k/powerlevel10k"
 ZSH_COLORIZE_STYLE="friendly"
 
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history)
 
 export PATH="${HOME}/.local/vim/bin:${PATH}"
