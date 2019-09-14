@@ -114,6 +114,7 @@ function install_prereqs_linux_ubuntu() {
   sudo add-apt-repository -y ppa:neovim-ppa/stable
 
   sudo apt install -y \
+    cmatrix \
     datamash \
     fortune-mod \
     g++ \
@@ -151,7 +152,6 @@ function install_prereqs_linux_ubuntu() {
     bvi \
     cask \
     cmake \
-    cmatrix \
     colordiff \
     csvkit \
     diff-so-fancy \
