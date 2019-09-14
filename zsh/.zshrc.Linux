@@ -114,48 +114,103 @@ function install_prereqs_linux_ubuntu() {
   sudo add-apt-repository -y ppa:neovim-ppa/stable
 
   sudo apt install -y \
+    datamash \
     exa \
     fortune-mod \
     g++ \
     golang \
     golang-glide \
     golang-golang-x-tools \
+    htop \
+    httpie \
+    jq \
     libstdc++-9-dev \
     libncurses-dev \
+    ncdu \
     neovim \
     python-dev \
     python3-dev \
     python3-neovim \
-    vim-youcompleteme \
-    zsh-syntax-highlighting
+    vim-youcompleteme
+
+  # LinuxBrew
+  if ! [ -d /home/linuxbrew ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+  fi
+
+  # Universal Ctags
+  brew install \
+    --HEAD universal-ctags/universal-ctags/universal-ctags
+
+  brew install \
+    ack \
+    asciinema \
+    asciiquarium \
+    autoconf \
+    automake \
+    bat \
+    bvi \
+    cask \
+    cmake \
+    cmatrix \
+    colordiff \
+    csvkit \
+    diff-so-fancy \
+    dos2unix \
+    fzf \
+    glances \
+    howdoi \
+    iftop \
+    lastpass-cli \
+    libmagic \
+    libtool \
+    mycli \
+    node \
+    npm \
+    nyancat \
+    packer \
+    pgcli \
+    pkg-config \
+    ponysay \
+    prettyping \
+    pup \
+    reattach-to-user-namespace \
+    ripgrep \
+    rust \
+    task \
+    tldr \
+    urlview
+
+  brew install \
+    tmux --HEAD
+
+  # Python packages
+  sudo pip install -U \
+    powerline-status \
+    saws
 
   install_prereqs_common
 
-  # SourceCodePro+Powerline+Awesome Font for Powerlevel10k
-  PA_FONT=~/.fonts/SourceCodePro+Powerline+Awesome+Regular.ttf
-  if ! [ -f ${PA_FONT} ]; then
+  # MOTD server+client
+  go get -u github.com/stevenwoah/motd-server
+  go get -u github.com/stevenwoah/motd-client
+
+  # Sift
+  go get -u github.com/svent/sift
+
+  # FiraCode Nerd Fonts for Powerlevel10k
+  FC_FONT="${HOME}/.fonts/Fura Code Bold Nerd Font Complete.ttf"
+  if ! [ -f ${FC_FONT} ]; then
     mkdir -p ~/.fonts
-    curl -Lq \
-      https://github.com/Falkor/dotfiles/raw/master/fonts/SourceCodePro%2BPowerline%2BAwesome%2BRegular.ttf \
-      > ${PA_FONT}
+    TMP_ZIP="${HOME}/FiraCode.zip"
+    curl -Ls https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip > ${TMP_ZIP} && \
+      unzip -u -d ~/.fonts/ ${TMP_ZIP} && \
+      /bin/rm -f ${TMP_ZIP}
     fc-cache -v
   fi
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
-  # ponysay
-  if ! [ -d ~/ponysay ]; then
-    ( git clone https://github.com/erkin/ponysay ~/ponysay && \
-      cd ~/ponysay && \
-      python3 setup.py --freedom=partial --private install && \
-      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
-  else
-    ( cd ~/ponysay && \
-      git pull && \
-      python3 setup.py --freedom=partial --private install && \
-      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
-  fi
 }
 
 function install_prereqs_linux_arch() {
@@ -186,8 +241,7 @@ function install_prereqs_linux_arch() {
     ripgrep \
     tldr \
     unzip \
-    z \
-    zsh-syntax-highlighting
+    z
 
   # LinuxBrew
   if ! [ -d /home/linuxbrew ]; then
