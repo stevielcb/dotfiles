@@ -251,9 +251,7 @@ function install_prereqs_linux_arch() {
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
   brew install \
-    ack \
     asciinema \
-    asciiquarium \
     bvi \
     cask \
     cmake \
@@ -261,20 +259,15 @@ function install_prereqs_linux_arch() {
     colordiff \
     csvkit \
     dos2unix \
-    howdoi \
     iftop \
-    lastpass-cli \
     libmagic \
     libtool \
     mycli \
     node \
     npm \
     nyancat \
-    packer \
     pgcli \
     ponysay \
-    pup \
-    reattach-to-user-namespace \
     rust \
     task \
     urlview
