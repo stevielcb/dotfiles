@@ -97,6 +97,17 @@ function install_prereqs_common() {
   # indentLine
   #do_git_update ~/.vim/bundle/indentLine https://github.com/Yggdroot/indentLine
 
+  # javascript/jsx/typescript/webdev vim plugins
+  do_git_update ~/.vim/bundle/vim-javascript https://github.com/pangloss/vim-javascript
+  do_git_update ~/.vim/bundle/typescript-vim https://github.com/leafgarland/typescript-vim
+  do_git_update ~/.vim/bundle/vim-jsx-pretty https://github.com/MaxMEllon/vim-jsx-pretty
+  do_git_update ~/.vim/bundle/vim-jsx-typescript https://github.com/peitalin/vim-jsx-typescript
+  do_git_update ~/.vim/bundle/vim-styled-components https://github.com/styled-components/vim-styled-components
+  do_git_update ~/.vim/bundle/vim-graphql https://github.com/jparise/vim-graphql
+
+  # ale
+  do_git_update ~/.vim/bundle/ale https://github.com/dense-analysis/ale
+
   # Indent Guides
   do_git_update ~/.vim/bundle/vim-indent-guides https://github.com/nathanaelkane/vim-indent-guides
 
@@ -201,6 +212,13 @@ fi
 export BAT_THEME="Monokai Extended Origin"
 
 ###############
+#### nvm ######
+###############
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+###############
 #### tmux #####
 ###############
 [[ $(whoami) != "root" ]] && ZSH_TMUX_AUTOSTART=true
@@ -240,6 +258,8 @@ POWERLEVEL9K_HISTORY_FOREGROUND='015'
 
 POWERLEVEL9K_TIME_FOREGROUND='158'
 POWERLEVEL9K_TIME_BACKGROUND='235'
+
+POWERLEVEL9K_TRANSIENT_PROMPT=always
 
 POWERLEVEL9K_VCS_MODIFIED_FOREGROUND='000'
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND='154'
@@ -446,6 +466,12 @@ export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(${VISUAL} {})+abort'"
 # Make sure to include hidden files but I don't care about .git or its children
 # https://i.kym-cdn.com/photos/images/original/001/080/653/288.png
 export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*' 2>/dev/null"
+
+################################################################################
+# Misc.
+################################################################################
+
+export NODE_OPTIONS="--no-warnings"
 
 ################################################################################
 # Login

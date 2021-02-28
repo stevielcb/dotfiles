@@ -41,10 +41,12 @@ function install_prereqs_darwin() {
     neovim \
     node \
     npm \
+    nvm \
     nyancat \
     packer \
     pgcli \
     ponysay \
+    prettier \
     prettyping \
     pup \
     reattach-to-user-namespace \
@@ -93,7 +95,7 @@ function install_prereqs_darwin() {
   do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
     ( cd ~/.vim/bundle/YouCompleteMe && \
       git submodule update --init --recursive --recommend-shallow && \
-      python3 ./install.py ${YCM_FLAGS[@]} \
+      /usr/local/opt/python@3.9/bin/python3 ./install.py ${YCM_FLAGS[@]} \
     )
 
   # Neovim python support (for YCM)
@@ -105,6 +107,9 @@ function install_prereqs_darwin() {
   # vim-instant-markdown
   do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
   /usr/local/bin/npm install -g instant-markdown-d@next
+
+  # bash-language-server
+  /usr/local/bin/npm install -g bash-language-server
 
   install_prereqs_common
 
@@ -137,6 +142,7 @@ alias ss="sudo -Es"
 
 export GOPATH="${HOME}/go"
 export PATH="${GOPATH}/bin:${HOME}/.cargo/bin:${PATH}"
+export PATH="/usr/local/opt/python@3.9/bin:$PATH"
 
 ZSH_PLUGINS+=(
   brew

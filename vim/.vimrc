@@ -38,6 +38,9 @@ set hidden
 
 let mapleader = ","
 
+" let g:python_host_prog = expand($XDG_DATA_HOME).'/virtualenvs/nvimp2-sk9zInl9/bin/python'
+let g:python3_host_prog = '/usr/local/opt/python@3.9/bin/python3'
+
 autocmd FileType markdown setlocal shiftwidth=4 ts=4
 autocmd FileType go setlocal noexpandtab
 
@@ -76,6 +79,30 @@ if is_mac
   let g:instant_markdown_browser = "'open -gna \"Google Chrome\" --args --new-window --app=\"data:text/html,<html><body><script>window.moveTo(0,0);window.resizeTo(900,900);window.location = \\\"http://localhost:8090\\\";</script></body></html>\"'"
 endif
 
+" JS/TS syntax highlighting fix
+autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
+
+" vim-prettier
+" autocmd TextChanged,InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
+" autocmd InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
+
+" ale
+let g:ale_fixers = {
+\   'javascript': ['prettier','eslint','importjs','remove_trailing_lines','trim_whitespace'],
+\   'css': ['prettier'],
+\}
+let g:ale_fix_on_save = 1
+let g:ale_linters = {
+    \ 'javascript': ['prettier','eslint'],
+    \ 'sh': ['language_server'],
+    \ }
+let g:ale_linters_explicit = 1
+autocmd InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html ALEFix
+nnoremap ]r :ALENextWrap<CR>     " move to the next ALE warning / error
+nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
+
+
 """"""""""""""" NERDTree
 """" Good defaults
 " Open automatically if no files opened on start
@@ -101,7 +128,7 @@ let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
 
 " Emmet-vim
-let g:user_emmet_leader_key='<C-Y>'
+let g:user_emmet_leader_key='<C-E>'
 
 " VimDevIcons
 let g:airline_powerline_fonts = 1
