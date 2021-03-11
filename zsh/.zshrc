@@ -55,6 +55,9 @@ function install_prereqs_common() {
       curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   fi;
 
+  # coc.nvim
+  do_git_update ~/.vim/bundle/coc.nvim https://github.com/neoclide/coc.nvim
+
   # fugitive.vim
   do_git_update ~/.vim/bundle/vim-fugitive https://github.com/tpope/vim-fugitive
 

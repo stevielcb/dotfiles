@@ -38,7 +38,6 @@ set hidden
 
 let mapleader = ","
 
-" let g:python_host_prog = expand($XDG_DATA_HOME).'/virtualenvs/nvimp2-sk9zInl9/bin/python'
 let g:python3_host_prog = '/usr/local/opt/python@3.9/bin/python3'
 
 autocmd FileType markdown setlocal shiftwidth=4 ts=4
@@ -87,14 +86,63 @@ autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 " autocmd TextChanged,InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
 " autocmd InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
 
+" coc.nvim
+let g:coc_global_extensions = [
+      \ 'coc-browser',
+      \ 'coc-css',
+      \ 'coc-emmet',
+      \ 'coc-eslint',
+      \ 'coc-git',
+      \ 'coc-go',
+      \ 'coc-highlight',
+      \ 'coc-html',
+      \ 'coc-html-css-support',
+      \ 'coc-htmlhint',
+      \ 'coc-json',
+      \ 'coc-markdownlint',
+      \ 'coc-pyright',
+      \ 'coc-sh',
+      \ 'coc-snippets',
+      \ 'coc-spell-checker',
+      \ 'coc-styled-components',
+      \ 'coc-stylelintplus',
+      \ 'coc-svg',
+      \ 'coc-tabnine',
+      \ 'coc-toml',
+      \ 'coc-tsserver',
+      \ 'coc-vimlsp',
+      \ 'coc-xml',
+      \ 'coc-yaml',
+      \]
+
+" use <tab> for trigger completion and navigate to the next complete item
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
+
+inoremap <silent><expr> <Tab>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<Tab>" :
+      \ coc#refresh()
+
+vmap <leader>a <Plug>(coc-codeaction-selected)
+nmap <leader>a <Plug>(coc-codeaction-selected)
+nmap <leader>e <Plug>(coc-git-chunkinfo)
+nnoremap <Leader>c :call CocAction('pickColor')<CR>
+nnoremap <Leader>cp :call CocAction('colorPresentation')<CR>
+
 " ale
 let g:ale_fixers = {
+\   '*': ['remove_trailing_lines','trim_whitespace'],
+\   'json': ['prettier'],
 \   'javascript': ['prettier','eslint','importjs','remove_trailing_lines','trim_whitespace'],
 \   'css': ['prettier'],
 \}
 let g:ale_fix_on_save = 1
 let g:ale_linters = {
     \ 'javascript': ['prettier','eslint'],
+    \ 'json': ['prettier'],
     \ 'sh': ['language_server'],
     \ }
 let g:ale_linters_explicit = 1
@@ -144,6 +192,10 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=233
 nnoremap <silent> <Leader>gb :Gblame<CR>
 nnoremap <silent> <Leader>gd :Gdiff<CR>
 nnoremap <silent> <Leader>gs :Gstatus<CR>
+
+" git-gutter
+" disable gutter signs in favor of coc-nvim git extension
+let g:gitgutter_signs = 0
 
 """""""""""""" fzf
 """" basic setup
