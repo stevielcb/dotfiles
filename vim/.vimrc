@@ -136,7 +136,8 @@ nnoremap <Leader>cp :call CocAction('colorPresentation')<CR>
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines','trim_whitespace'],
 \   'json': ['prettier'],
-\   'javascript': ['prettier','eslint','importjs','remove_trailing_lines','trim_whitespace'],
+\   'javascript': ['prettier','eslint','importjs'],
+\   'typescriptreact': ['prettier','eslint','importjs'],
 \   'css': ['prettier'],
 \}
 let g:ale_fix_on_save = 1
@@ -144,9 +145,11 @@ let g:ale_linters = {
     \ 'javascript': ['prettier','eslint'],
     \ 'json': ['prettier'],
     \ 'sh': ['language_server'],
+    \ 'typescriptreact': ['prettier','eslint'],
     \ }
 let g:ale_linters_explicit = 1
 autocmd InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html ALEFix
+nnoremap <silent> <Leader>A :ALEFix<CR>
 nnoremap ]r :ALENextWrap<CR>     " move to the next ALE warning / error
 nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
 
