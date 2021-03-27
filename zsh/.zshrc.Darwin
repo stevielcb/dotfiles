@@ -98,6 +98,9 @@ function install_prereqs_darwin() {
       /usr/local/opt/python@3.9/bin/python3 ./install.py ${YCM_FLAGS[@]} \
     )
 
+  # pipenv
+  pip3 install -U pipenv
+
   # Neovim python support (for YCM)
   pip3 install -U pynvim
 
