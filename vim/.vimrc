@@ -328,10 +328,11 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=235
 autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=233
 
 " fugitive
-nnoremap <silent> <Leader>gb :Gblame<CR>
-nnoremap <silent> <Leader>gd :Gdiff<CR>
-nnoremap <silent> <Leader>gl :Glog<CR>
-nnoremap <silent> <Leader>gs :Gstatus<CR>
+nnoremap <silent> <Leader>gb :Git blame<CR>
+nnoremap <silent> <Leader>gd :Git diff<CR>
+nnoremap <silent> <Leader>gl :Git log<CR>
+nnoremap <silent> <Leader>gp :Git push<CR>
+nnoremap <silent> <Leader>gs :Git status<CR>
 
 " git-gutter
 " disable gutter signs in favor of coc-nvim git extension
