@@ -43,6 +43,9 @@ let g:python3_host_prog = '/usr/local/opt/python@3.9/bin/python3'
 autocmd FileType markdown setlocal shiftwidth=4 ts=4
 autocmd FileType go setlocal noexpandtab
 
+autocmd BufNewFile,BufRead Jenkinsfile setf groovy
+autocmd BufNewFile,BufRead *Dockerfile* setf dockerfile
+
 " User functions
 function! OneBuf()
   if len(getbufinfo({'buflisted':1})) > 1
@@ -71,6 +74,19 @@ nnoremap <silent> <expr> <Leader>q (OneBuf() ? ":q\<CR>" : ":bd\<CR>")
 " Write shortcuts
 nnoremap <silent> <Leader>w :w<CR>
 nnoremap <silent> <Leader>W :w!<CR>
+" ALE
+nnoremap <silent> <Leader>A :ALEFix<CR>
+nnoremap ]r :ALENextWrap<CR>     " move to the next ALE warning / error
+nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
+" beautify
+nnoremap <silent> <Leader>b :call JsBeautify()<CR>
+autocmd FileType json nnoremap <silent> <Leader>b :call JsonBeautify()<CR>
+autocmd FileType jsx nnoremap <silent> <Leader>b :call JsxBeautify()<CR>
+autocmd FileType html nnoremap <silent> <Leader>b :call HtmlBeautify()<CR>
+autocmd FileType css nnoremap <silent> <Leader>b :call CSSBeautify()<CR>
+" coc
+nnoremap ]e :call CocAction('diagnosticNext')<CR>
+nnoremap [e :call CocAction('diagnosticPrevious')<CR>
 
 " vim-instant-markdown
 if is_mac
@@ -78,9 +94,9 @@ if is_mac
   let g:instant_markdown_browser = "'open -gna \"Google Chrome\" --args --new-window --app=\"data:text/html,<html><body><script>window.moveTo(0,0);window.resizeTo(900,900);window.location = \\\"http://localhost:8090\\\";</script></body></html>\"'"
 endif
 
-" JS/TS syntax highlighting fix
-autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
-autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
+" syntax highlighting fix
+autocmd BufEnter *.{js,jsx,ts,tsx},*Jenkinsfile* :syntax sync fromstart
+autocmd BufLeave *.{js,jsx,ts,tsx},*Jenkinsfile* :syntax sync clear
 
 " vim-prettier
 " autocmd TextChanged,InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
@@ -132,26 +148,141 @@ nmap <leader>e <Plug>(coc-git-chunkinfo)
 nnoremap <Leader>c :call CocAction('pickColor')<CR>
 nnoremap <Leader>cp :call CocAction('colorPresentation')<CR>
 
+augroup FiletypeGroup
+  autocmd!
+  au BufNewFile,BufRead *.jsx set filetype=javascript.jsx
+augroup END
+
+au BufNewFile,BufRead .eslintrc,.prettierrc,.stylelintrc set filetype=json
+au BufNewFile,BufRead *.ejs set filetype=html
+au BufNewFile,BufRead swagger*.yaml set filetype=openapi.yaml
+
 " ale
+function! NpmGroovyFixer(buffer) abort
+  return {
+        \ 'command': 'groovy-fixer %s'
+        \ }
+endfunction
+
+function! NpmGroovyFormatter(buffer) abort
+  return {
+        \ 'command': 'groovy-formatter %s'
+        \ }
+endfunction
+
+function NpmGroovyLinterCallback(buffer, lines) abort
+  let l:pattern1 = '^{"id":\d\+,"line"\:\(\d\+\),"rule":"\([^"]\+\)","severity":"\(\w\+\)","msg":"\([^"]\+\)"}$'
+  let l:pattern2 = '^{"id":\d\+,"line"\:\(\d\+\),"rule":"\([^"]\+\)","severity":"\(\w\+\)","msg":"\([^"]\+\)".*"start":{"line":\(\d\+\),"character":\(\d\+\)}.*}$'
+  let l:output = []
+
+  let l:typeMap = {
+        \ 'critical': 'E',
+        \ 'warning': 'W',
+        \ 'info': 'I',
+        \ }
+
+  for l:match in ale#util#GetMatches(a:lines, l:pattern1)
+    let l:item = {
+          \ 'lnum': l:match[1] + 0,
+          \ 'code': l:match[2],
+          \ 'type': l:typeMap[l:match[3]],
+          \ 'text': l:match[4],
+          \ }
+
+    call add(l:output, l:item)
+  endfor
+
+  for l:match in ale#util#GetMatches(a:lines, l:pattern2)
+    let l:item = {
+          \ 'lnum': l:match[1] + 0,
+          \ 'code': l:match[2],
+          \ 'type': l:typeMap[l:match[3]],
+          \ 'text': l:match[4],
+          \ 'col': l:match[6],
+          \ }
+
+    call add(l:output, l:item)
+  endfor
+
+  return l:output
+endfunction
+
+function NpmJenkinsGroovyLinterCallback(buffer, lines) abort
+  let l:pattern = '^\(\w\+\):\s\+\(\d\+\):\s\+\(.*\) @ line \(\d\+\), column \(\d\+\)\.$'
+  let l:output = []
+
+  let l:typeMap = {
+        \ 'critical': 'E',
+        \ 'warning': 'W',
+        \ 'info': 'I',
+        \ }
+
+  for l:match in ale#util#GetMatches(a:lines, l:pattern2)
+    let l:item = {
+          \ 'lnum': l:match[2] + 0,
+          \ 'code': l:match[1],
+          \ 'type': 'E',
+          \ 'text': l:match[3],
+          \ 'col': l:match[5],
+          \ }
+
+    call add(l:output, l:item)
+  endfor
+
+  return l:output
+endfunction
+
+execute ale#fix#registry#Add('groovy-fixer', 'NpmGroovyFixer', ['groovy'], 'npm-groovy-lint for groovy')
+execute ale#fix#registry#Add('groovy-formatter', 'NpmGroovyFormatter', ['groovy'], 'npm-groovy-lint for groovy')
+
+call ale#linter#Define('groovy', {
+      \ 'name': 'npm-groovy-lint',
+      \ 'executable': 'npm-groovy-lint',
+      \ 'command': 'groovy-linter %s',
+      \ 'callback': 'NpmGroovyLinterCallback',
+      \ })
+
+call ale#linter#Define('groovy', {
+      \ 'name': 'jenkins-linter',
+      \ 'executable': 'jenkins-linter',
+      \ 'command': 'jenkins-linter %s',
+      \ 'callback': 'NpmJenkinsGroovyLinterCallback',
+      \ })
+
 let g:ale_fixers = {
 \   '*': ['remove_trailing_lines','trim_whitespace'],
+\   'css': ['prettier','stylelint'],
+\   'groovy': ['groovy-fixer','groovy-formatter'],
+\   'javascript': ['prettier','eslint','importjs','stylelint'],
 \   'json': ['prettier'],
-\   'javascript': ['prettier','eslint','importjs'],
-\   'typescriptreact': ['prettier','eslint','importjs'],
-\   'css': ['prettier'],
+\   'jsx': ['prettier','eslint','importjs','stylelint'],
+\   'python': ['autoimport','isort','yapf'],
+\   'typescript': ['prettier','eslint','importjs'],
+\   'typescriptreact': ['prettier','eslint','importjs','stylelint'],
+\   'yaml': ['prettier','yamlfix'],
 \}
 let g:ale_fix_on_save = 1
+let g:ale_linter_aliases = {
+    \ 'jsx': ['css','javascript'],
+    \ }
 let g:ale_linters = {
+    \ 'css': ['csslint'],
+    \ 'groovy': ['npm-groovy-lint','jenkins-linter'],
     \ 'javascript': ['prettier','eslint'],
     \ 'json': ['prettier'],
+    \ 'jsx': ['prettier','eslint','stylelint'],
+    \ 'openapi': ['yamllint','ibm_validator'],
+    \ 'python': ['autoimport','flake8'],
     \ 'sh': ['language_server'],
-    \ 'typescriptreact': ['prettier','eslint'],
+    \ 'typescript': ['prettier','eslint','stylelint'],
+    \ 'typescriptreact': ['prettier','eslint','stylelint'],
+    \ 'yaml': ['prettier','yamllint','spectral','ibm_validator'],
     \ }
 let g:ale_linters_explicit = 1
-autocmd InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html ALEFix
-nnoremap <silent> <Leader>A :ALEFix<CR>
-nnoremap ]r :ALENextWrap<CR>     " move to the next ALE warning / error
-nnoremap [r :ALEPreviousWrap<CR> " move to the previous ALE warning / error
+let g:ale_pattern_options = {
+    \ '.*\.pyi$': {'ale_enabled': 0, 'ale_fixers': {}},
+    \ }
+autocmd InsertLeave *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html,*Jenkinsfile* ALEFix
 
 
 """"""""""""""" NERDTree
