@@ -194,6 +194,7 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=233
 " fugitive
 nnoremap <silent> <Leader>gb :Gblame<CR>
 nnoremap <silent> <Leader>gd :Gdiff<CR>
+nnoremap <silent> <Leader>gl :Glog<CR>
 nnoremap <silent> <Leader>gs :Gstatus<CR>
 
 " git-gutter

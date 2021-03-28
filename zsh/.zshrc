@@ -2,7 +2,7 @@ export LANG="en_US.UTF-8"
 
 #zmodload zsh/zprof
 
-export PATH="${HOME}/bin:${HOME}/go/bin:/usr/local/bin:${HOME}/.iterm2:/usr/local/sbin:$PATH"
+export PATH="${HOME}/bin:${HOME}/go/bin:${HOME}/.cargo/bin:/usr/local/bin:${HOME}/.iterm2:/usr/local/sbin:$PATH"
 for USERBIN in ~/bin ~/go/bin; do
   mkdir -p ${USERBIN}
 done
