@@ -103,6 +103,9 @@ function install_prereqs_common() {
   # vim-obsession
   do_git_update ~/.vim/bundle/vim-obsession https://github.com/tpope/vim-obsession
 
+  # vim-toml
+  do_git_update ~/.vim/bundle/vim-toml https://github.com/cespare/vim-toml
+
   # indentLine
   #do_git_update ~/.vim/bundle/indentLine https://github.com/Yggdroot/indentLine
 
