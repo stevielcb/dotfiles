@@ -94,6 +94,10 @@ function install_prereqs_common() {
   # Tabular
   do_git_update ~/.vim/bundle/tabular https://github.com/godlygeek/tabular
 
+  # vim-jsbeautify
+  do_git_update ~/.vim/bundle/vim-jsbeautify https://github.com/maksimr/vim-jsbeautify
+  (cd ~/.vim/bundle/vim-jsbeautify && git submodule update --init --recursive)
+
   # Emmet-vim
   do_git_update ~/.vim/bundle/emmet-vim https://github.com/mattn/emmet-vim
 

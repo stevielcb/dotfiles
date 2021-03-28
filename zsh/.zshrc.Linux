@@ -212,6 +212,9 @@ function install_prereqs_linux_ubuntu() {
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
 
+  # js-beautify
+  npm install -g js-beautify
+
   # npm-groovy-lint
   npm install -g npm-groovy-lint
 }
@@ -313,6 +316,9 @@ function install_prereqs_linux_arch() {
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
+
+  # js-beautify
+  npm install -g js-beautify
 
   # npm-groovy-lint
   npm install -g npm-groovy-lint
