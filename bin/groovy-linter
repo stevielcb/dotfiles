@@ -7,4 +7,4 @@ npm-groovy-lint \
     --no-insight \
     -f ${FILE} \
     -o json | \
-    jq -r '.files[].errors[]';
+    jq -c '.files[].errors[]';
