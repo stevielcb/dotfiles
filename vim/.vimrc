@@ -84,6 +84,11 @@ autocmd FileType json nnoremap <silent> <Leader>b :call JsonBeautify()<CR>
 autocmd FileType jsx nnoremap <silent> <Leader>b :call JsxBeautify()<CR>
 autocmd FileType html nnoremap <silent> <Leader>b :call HtmlBeautify()<CR>
 autocmd FileType css nnoremap <silent> <Leader>b :call CSSBeautify()<CR>
+vnoremap <buffer> <Leader>b :call RangeJsBeautify()<CR>
+autocmd FileType json vnoremap <buffer> <Leader>b :call RangeJsonBeautify()<CR>
+autocmd FileType jsx vnoremap <buffer> <Leader>b :call RangeJsxBeautify()<CR>
+autocmd FileType html vnoremap <buffer> <Leader>b :call RangeHtmlBeautify()<CR>
+autocmd FileType css vnoremap <buffer> <Leader>b :call RangeCSSBeautify()<CR>
 " coc
 nnoremap ]e :call CocAction('diagnosticNext')<CR>
 nnoremap [e :call CocAction('diagnosticPrevious')<CR>
