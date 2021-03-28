@@ -1,0 +1,10 @@
+#!/bin/bash
+
+FILE="${1}"
+
+npm-groovy-lint \
+    --nolintafter \
+    --no-insight \
+    -f ${FILE} \
+    -o json | \
+    jq -r '.files[].errors[]';

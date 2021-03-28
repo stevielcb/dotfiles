@@ -1,0 +1,11 @@
+#!/bin/bash
+
+FILE="${1}"
+
+npm-groovy-lint \
+    --format \
+    --nolintafter \
+    --no-insight \
+    -f ${FILE} \
+    -o json | \
+    jq -r '.files[].updatedSource';

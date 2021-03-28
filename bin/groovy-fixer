@@ -1,0 +1,12 @@
+#!/bin/bash
+
+FILE="${1}"
+
+npm-groovy-lint \
+    --fix \
+    --nolintafter \
+    --no-insight \
+    -f ${FILE} \
+    -o json | \
+    jq -r '.files[].updatedSource' | \
+    python3 -c "import sys; print(''.join(sys.stdin.readlines()).strip())";

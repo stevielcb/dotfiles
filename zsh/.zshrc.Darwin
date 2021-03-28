@@ -117,6 +117,9 @@ function install_prereqs_darwin() {
   # bash-language-server
   /usr/local/bin/npm install -g bash-language-server
 
+  # npm-groovy-lint
+  /usr/local/bin/npm install -g npm-groovy-lint
+
   install_prereqs_common
 
   # Update build # to prevent the prereq check happening too often

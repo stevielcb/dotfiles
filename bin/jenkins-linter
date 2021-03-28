@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#### CONFIG FILE FORMAT ####
+# BASIC_AUTH_CREDS=username:password
+# JENKINS_BASE_URL=http://jenkins:8000
+
+CONFIG_FILE="${HOME}/.dotfiles/bin/.jenkins"
+
+if [[ ! -f ${CONFIG_FILE} ]]; then
+  echo "[ERROR] No config file found at ${CONFIG_FILE}";
+  exit 1;
+fi;
+
+source ${CONFIG_FILE};
+
+FILE="${1}"
+
+http \
+  -pb \
+  -f \
+  -I \
+  --pretty none \
+  -a "${BASIC_AUTH_CREDS}" \
+  "${JENKINS_BASE_URL}/pipeline-model-converter/validate" \
+  jenkinsfile=@${FILE};

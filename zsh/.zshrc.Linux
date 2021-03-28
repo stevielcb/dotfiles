@@ -211,6 +211,9 @@ function install_prereqs_linux_ubuntu() {
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
+
+  # npm-groovy-lint
+  npm install -g npm-groovy-lint
 }
 
 function install_prereqs_linux_arch() {
@@ -310,6 +313,9 @@ function install_prereqs_linux_arch() {
 
   # Powerlevel10k
   do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
+
+  # npm-groovy-lint
+  npm install -g npm-groovy-lint
 }
 
 # Ensure LinuxBrew is in the PATH before we try installing stuff
