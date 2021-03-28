@@ -37,6 +37,12 @@ function install_prereqs_common() {
   # Oh-My-ZSH!
   do_git_update ~/.oh-my-zsh https://github.com/robbyrussell/oh-my-zsh
 
+  POETRY_PLUGIN_DIR="${HOME}/.oh-my-zsh/custom/plugins/poetry"
+  if [[ ! -d ${POETRY_PLUGIN_DIR} ]]; then
+    mkdir -p ${POETRY_PLUGIN_DIR};
+    poetry completions zsh > ${POETRY_PLUGIN_DIR}/_poetry;
+  fi;
+
   # zsh-autosuggestions
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
 
@@ -306,6 +312,7 @@ ZSH_PLUGINS+=(
   node
   npm
   pip
+  poetry
   python
   redis-cli
   screen

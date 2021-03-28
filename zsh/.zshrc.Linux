@@ -185,6 +185,7 @@ function install_prereqs_linux_ubuntu() {
   # Python packages
   sudo pip install -U \
     pipenv \
+    poetry \
     powerline-status \
     saws
 
@@ -284,7 +285,8 @@ function install_prereqs_linux_arch() {
   # Python3 packages
   sudo pip3 install -U \
     neovim \
-    pipenv
+    pipenv \
+    poetry
 
   install_prereqs_common
 

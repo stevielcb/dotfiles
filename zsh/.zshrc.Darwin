@@ -101,6 +101,9 @@ function install_prereqs_darwin() {
   # pipenv
   pip3 install -U pipenv
 
+  # poetry
+  pip3 install -U poetry
+
   # Neovim python support (for YCM)
   pip3 install -U pynvim
 
