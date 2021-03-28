@@ -207,7 +207,7 @@ function NpmGroovyLinterCallback(buffer, lines) abort
   return l:output
 endfunction
 
-function NpmJenkinsGroovyLinterCallback(buffer, lines) abort
+function! NpmJenkinsGroovyLinterCallback(buffer, lines) abort
   let l:pattern = '^\(\w\+\):\s\+\(\d\+\):\s\+\(.*\) @ line \(\d\+\), column \(\d\+\)\.$'
   let l:output = []
 
@@ -217,7 +217,7 @@ function NpmJenkinsGroovyLinterCallback(buffer, lines) abort
         \ 'info': 'I',
         \ }
 
-  for l:match in ale#util#GetMatches(a:lines, l:pattern2)
+  for l:match in ale#util#GetMatches(a:lines, l:pattern)
     let l:item = {
           \ 'lnum': l:match[2] + 0,
           \ 'code': l:match[1],
