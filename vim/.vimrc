@@ -171,8 +171,8 @@ function! NpmGroovyFormatter(buffer) abort
 endfunction
 
 function NpmGroovyLinterCallback(buffer, lines) abort
-  let l:pattern1 = '^{"id":\d\+,"line"\:\(\d\+\),"rule":"\([^"]\+\)","severity":"\(\w\+\)","msg":"\([^"]\+\)"}$'
-  let l:pattern2 = '^{"id":\d\+,"line"\:\(\d\+\),"rule":"\([^"]\+\)","severity":"\(\w\+\)","msg":"\([^"]\+\)".*"start":{"line":\(\d\+\),"character":\(\d\+\)}.*}$'
+  let l:pattern1 = '^{"id":\d\+,"line":\(\d\+\),"rule":"\([^"]\+\)","severity":"\(\w\+\)","msg":"\([^"]\+\)"}$'
+  let l:pattern2 = '^{"id":\d\+,"line":\(\d\+\),"rule":"\([^"]\+\)","severity":"\(\w\+\)","msg":"\([^"]\+\)".*"start":{"line":\(\d\+\),"character":\(\d\+\)}.*}$'
   let l:output = []
 
   let l:typeMap = {
