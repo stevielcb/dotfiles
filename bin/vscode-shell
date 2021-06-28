@@ -1,0 +1,18 @@
+#!/bin/zsh
+
+export PATH="/usr/local/bin:${PATH}"
+TMUX_CMD="/usr/local/bin/tmux"
+
+SESSION="$(basename "$(pwd)")"
+
+if [[ -z "$TMUX" ]]; then
+  eval ${TMUX_CMD} attach-session -d -t "$SESSION" || eval ${TMUX_CMD} new-session -s "$SESSION";
+else
+  SESSION_LIST="$(eval ${TMUX_CMD} ls)"
+  FOUND_SESSION="$(echo \"${SESSION_LIST}\" | grep \"${SESSION}\")"
+  if [[ -z "${FOUND_SESSION}" ]]; then
+    eval ${TMUX_CMD} new -s "${SESSION}" -d;
+  fi
+
+  eval ${TMUX_CMD} switch-client -t "$SESSION";
+fi
