@@ -374,7 +374,7 @@ function ginit {
   git init
   git add .
   git commit -m "Initial commit"
-  git remote add origin git@github.com:stevenwoah/${CUR_DIR_NAME}.git
+  git remote add origin git@github.com:stevielcb/${CUR_DIR_NAME}.git
   git remote -v
   git push -u origin master
 }
@@ -383,7 +383,7 @@ function mit {
   cat > LICENSE << EOF
 MIT License
 
-Copyright (c) $(date +"%Y") Steven O'Donnell
+Copyright (c) $(date +"%Y") Stevie Ballantines
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

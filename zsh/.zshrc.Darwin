@@ -75,8 +75,8 @@ function install_prereqs_darwin() {
   cargo install devicon-lookup
 
   # MOTD server+client
-  go get -u github.com/stevenwoah/motd-server
-  go get -u github.com/stevenwoah/motd-client
+  go get -u github.com/stevielcb/motd-server
+  go get -u github.com/stevielcb/motd-client
 
   # Sift
   go get -u github.com/svent/sift
