@@ -38,7 +38,7 @@ set hidden
 
 let mapleader = ","
 
-let g:python3_host_prog = '/usr/local/opt/python@3.9/bin/python3'
+let g:python3_host_prog = '/opt/homebrew/opt/python@3.11/bin/python3'
 
 autocmd FileType markdown setlocal shiftwidth=4 ts=4
 autocmd FileType go setlocal noexpandtab

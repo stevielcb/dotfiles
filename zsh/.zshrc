@@ -2,7 +2,7 @@ export LANG="en_US.UTF-8"
 
 #zmodload zsh/zprof
 
-export PATH="${HOME}/bin:${HOME}/go/bin:${HOME}/.local/bin:${HOME}/.cargo/bin:/usr/local/bin:${HOME}/.iterm2:/usr/local/sbin:$PATH"
+export PATH="${HOME}/bin:${HOME}/go/bin:${HOME}/.local/bin:${HOME}/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:${HOME}/.iterm2:/usr/local/sbin:$PATH"
 for USERBIN in ~/bin ~/go/bin; do
   mkdir -p ${USERBIN}
 done
@@ -46,14 +46,14 @@ function install_prereqs_common() {
   # zsh-autosuggestions
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
 
-  # zsh-morpho screensaver
-  do_git_update ~/.oh-my-zsh/custom/plugins/zsh-morpho https://github.com/psprint/zsh-morpho
-
   # zsh autopair plugin
   do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autopair https://github.com/hlissner/zsh-autopair
 
   # zsh fast syntax highlighting
-  do_git_update ~/.oh-my-zsh/custom/plugins/fast-syntax-highlighting https://github.com/zdharma/fast-syntax-highlighting
+  do_git_update ~/.oh-my-zsh/custom/plugins/F-Sy-H https://github.com/zdharma/fast-syntax-highlighting
+
+  # Powerlevel10k
+  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
 
   # Pathogen
   if ! [ -d ~/.vim/autoload ]; then
@@ -302,13 +302,13 @@ ZSH_PLUGINS+=(
   colored-man-pages
   common-aliases
   copybuffer
-  copydir
   copyfile
+  copypath
   dircycle
   docker
   encode64
   extract
-  fast-syntax-highlighting
+  F-Sy-H
   git
   gitignore
   golang

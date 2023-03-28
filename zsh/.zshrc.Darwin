@@ -9,7 +9,7 @@
 PREREQS_VERSION="201907-07"
 
 function install_prereqs_darwin() {
-  /usr/local/bin/brew install \
+  /opt/homebrew/bin/brew install \
     ack \
     asciinema \
     asciiquarium \
@@ -62,13 +62,15 @@ function install_prereqs_darwin() {
     z \
     zsh-syntax-highlighting
 
-  /usr/local/bin/brew cask install \
-    vagrant
+  /opt/homebrew/bin/brew install \
+    vagrant \
+    --cask
 
-  /usr/local/bin/brew cask install \
-    font-firacode-nerd-font
+  /opt/homebrew/bin/brew install \
+    homebrew/cask-fonts/font-fira-code-nerd-font \
+    --cask
 
-  /usr/local/bin/brew install \
+  /opt/homebrew/bin/brew install \
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
   # For vim-devicons fzf integration
@@ -87,15 +89,12 @@ function install_prereqs_darwin() {
   # Tmuxinator
   sudo gem install tmuxinator
 
-  # Powerlevel10k
-  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
   # YouCompleteMe
   YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
   do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
     ( cd ~/.vim/bundle/YouCompleteMe && \
       git submodule update --init --recursive --recommend-shallow && \
-      /usr/local/opt/python@3.9/bin/python3 ./install.py ${YCM_FLAGS[@]} \
+      /opt/homebrew/opt/python@3.11/bin/python3 ./install.py ${YCM_FLAGS[@]} \
     )
 
   # pipenv
@@ -112,16 +111,16 @@ function install_prereqs_darwin() {
 
   # vim-instant-markdown
   do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
-  /usr/local/bin/npm install -g instant-markdown-d@next
+  /opt/homebrew/bin/npm install -g instant-markdown-d@next
 
   # bash-language-server
-  /usr/local/bin/npm install -g bash-language-server
+  /opt/homebrew/bin/npm install -g bash-language-server
 
   # js-beautify
-  /usr/local/bin/npm install -g js-beautify
+  /opt/homebrew/bin/npm install -g js-beautify
 
   # npm-groovy-lint
-  /usr/local/bin/npm install -g npm-groovy-lint
+  /opt/homebrew/bin/npm install -g npm-groovy-lint
 
   install_prereqs_common
 
@@ -154,22 +153,15 @@ alias ss="sudo -Es"
 
 export GOPATH="${HOME}/go"
 export PATH="${GOPATH}/bin:${HOME}/.cargo/bin:${PATH}"
-export PATH="/usr/local/opt/python@3.9/bin:$PATH"
+export PATH="/opt/homebrew/opt/python@3.11/bin:$PATH"
 
 ZSH_PLUGINS+=(
   brew
   cask
-  osx
+  macos
   taskwarrior
   tmuxinator
-  zsh-morpho
 )
-
-# morpho screensaver
-zstyle ":morpho" screen-saver "cmatrix"
-zstyle ":morpho" arguments "-absC magenta"
-zstyle ":morpho" delay "115"
-zstyle ":morpho" check-interval "60"
 
 # ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

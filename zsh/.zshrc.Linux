@@ -70,9 +70,6 @@ EOF
     --enablerepo=gf-plus \
     zsh
 
-  # Powerlevel10k
-  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
   # ponysay
   if ! [ -d ~/ponysay ]; then
     ( git clone https://github.com/erkin/ponysay ~/ponysay && \
@@ -209,9 +206,6 @@ function install_prereqs_linux_ubuntu() {
     fc-cache -v
   fi
 
-  # Powerlevel10k
-  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
   # js-beautify
   npm install -g js-beautify
 
@@ -314,9 +308,6 @@ function install_prereqs_linux_arch() {
     fc-cache -v
   fi
 
-  # Powerlevel10k
-  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
-
   # js-beautify
   npm install -g js-beautify
 
@@ -354,14 +345,7 @@ ZSH_PLUGINS+=(
   brew
   cask
   systemd
-  zsh-morpho
 )
-
-# morpho screensaver
-zstyle ":morpho" screen-saver "cmatrix"
-zstyle ":morpho" arguments "-absC magenta"
-zstyle ":morpho" delay "115"
-zstyle ":morpho" check-interval "60"
 
 egrep -i 'ubuntu' /etc/os-release >/dev/null && ZSH_PLUGINS+=(ubuntu ufw)
 egrep -i 'fedora' /etc/os-release >/dev/null && ZSH_PLUGINS+=(dnf)

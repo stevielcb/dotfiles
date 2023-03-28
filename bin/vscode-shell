@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-export PATH="/usr/local/bin:${PATH}"
-TMUX_CMD="/usr/local/bin/tmux"
+export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH}"
+TMUX_CMD="/opt/homebrew/bin/tmux"
 
 SESSION="$(basename "$(pwd)")"
 
