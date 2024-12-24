@@ -104,6 +104,9 @@ function install_prereqs_darwin() {
   # Supercharged AWS
   pip3 install -U saws --break-system-packages
 
+  # GitHub Copilot
+  do_git_update ~/.vim/bundle/copilot.vim https://github.com/github/copilot.vim
+
   # vim-instant-markdown
   do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
   /opt/homebrew/bin/npm install -g instant-markdown-d@next
