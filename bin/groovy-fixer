@@ -1,12 +1,23 @@
 #!/bin/bash
 
+# This script is used to fix Groovy files using npm-groovy-lint and format the output.
+# Usage: ./groovy-fixer <file>
+# Arguments:
+#   <file> - The path to the Groovy file to be fixed.
+#
+# The script performs the following steps:
+# 1. Runs npm-groovy-lint with the specified options to fix the Groovy file.
+# 2. Outputs the result in JSON format.
+# 3. Uses jq to extract the updated source code from the JSON output.
+# 4. Uses Python to strip any leading or trailing whitespace from the updated source code.
+
 FILE="${1}"
 
 npm-groovy-lint \
     --fix \
     --nolintafter \
     --no-insight \
-    -f ${FILE} \
+    -f "${FILE}" \
     -o json | \
     jq -r '.files[].updatedSource' | \
     python3 -c "import sys; print(''.join(sys.stdin.readlines()).strip())";

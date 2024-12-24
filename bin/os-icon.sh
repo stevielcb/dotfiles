@@ -1,5 +1,12 @@
 #!/usr/bin/env zsh
 
+# This script prints an icon representing the operating system it is run on.
+# It uses the `uname` command to determine the OS type and prints the corresponding icon.
+#
+# The script first checks if the OS is Linux and if it is Android.
+# If not, it uses a case statement to match the OS type and print the corresponding icon.
+# For Linux, it further checks the distribution by reading the /etc/os-release file.
+
 UNAME="$(uname)"
 
 ANDROID_ICON=''

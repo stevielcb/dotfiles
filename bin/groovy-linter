@@ -1,10 +1,25 @@
 #!/bin/bash
 
+# This script lints a Groovy file using npm-groovy-lint and outputs the errors in JSON format.
+# Usage: ./groovy-linter <path-to-groovy-file>
+#
+# Arguments:
+#   FILE: The path to the Groovy file to be linted.
+#
+# The script performs the following steps:
+# 1. Takes the file path as an argument.
+# 2. Runs npm-groovy-lint with specified options:
+#    - --nolintafter: Disables linting after the first error.
+#    - --no-insight: Disables sending anonymous usage data.
+#    - -f: Specifies the file to be linted.
+#    - -o json: Outputs the linting results in JSON format.
+# 3. Pipes the JSON output to jq to extract and print the errors in a compact format.
+
 FILE="${1}"
 
 npm-groovy-lint \
     --nolintafter \
     --no-insight \
-    -f ${FILE} \
+    -f "${FILE}" \
     -o json | \
     jq -c '.files[].errors[]';

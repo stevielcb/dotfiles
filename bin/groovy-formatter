@@ -1,11 +1,21 @@
 #!/bin/bash
 
+# This script formats a Groovy file using npm-groovy-lint and outputs the formatted source
+# in JSON format.
+# Usage: ./groovy-formatter <file>
+# Arguments:
+#   <file> - The path to the Groovy file to be formatted.
+# The script performs the following steps:
+#   1. Takes the file path as an argument.
+#   2. Runs npm-groovy-lint with formatting options and outputs the result in JSON format.
+#   3. Uses jq to extract and print the updated source code from the JSON output.
+
 FILE="${1}"
 
 npm-groovy-lint \
     --format \
     --nolintafter \
     --no-insight \
-    -f ${FILE} \
+    -f "${FILE}" \
     -o json | \
     jq -r '.files[].updatedSource';

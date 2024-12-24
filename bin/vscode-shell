@@ -1,5 +1,18 @@
 #!/bin/zsh
 
+# This script manages tmux sessions based on the current working directory.
+# It first sets up the PATH environment variable to include Homebrew and local bin directories.
+# Then, it defines the tmux command path and the session name based on the current directory name.
+#
+# If the script is not running inside a tmux session:
+# - It tries to attach to an existing tmux session with the same name as the current directory.
+# - If no such session exists, it creates a new tmux session with that name.
+#
+# If the script is running inside a tmux session:
+# - It lists all existing tmux sessions.
+# - If no session with the current directory name exists, it creates a new detached session with that name.
+# - It then switches the tmux client to the session with the current directory name.
+
 export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH}"
 TMUX_CMD="/opt/homebrew/bin/tmux"
 

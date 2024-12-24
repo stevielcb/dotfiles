@@ -1,19 +1,41 @@
 #!/bin/bash
 
 #### CONFIG FILE FORMAT ####
+# This script requires a configuration file located at ~/.dotfiles/bin/.jenkins
+# The configuration file should contain the following variables:
 # BASIC_AUTH_CREDS=username:password
 # JENKINS_BASE_URL=http://jenkins:8000
 
+# This script is used to lint Jenkinsfiles using the Jenkins pipeline model converter API.
+# Usage: jenkins-linter <path_to_jenkinsfile>
+# Example: jenkins-linter my_jenkinsfile
+
+# CONFIG_FILE: Path to the configuration file containing authentication credentials and
+#              Jenkins base URL.
+# FILE: The Jenkinsfile to be linted, passed as the first argument to the script.
+
+# The script checks for the presence of the configuration file and the httpie command.
+# If the configuration file is not found, it exits with an error message.
+# If the httpie command is not found, it exits with an error message.
+
+# The script uses the httpie command to send a POST request to the Jenkins pipeline model
+# converter API to validate the Jenkinsfile. The response is printed to the console.
+
 CONFIG_FILE="${HOME}/.dotfiles/bin/.jenkins"
 
-if [[ ! -f ${CONFIG_FILE} ]]; then
+if [[ -e "${CONFIG_FILE}" ]]; then
   echo "[ERROR] No config file found at ${CONFIG_FILE}";
   exit 1;
 fi;
 
-source ${CONFIG_FILE};
+source "${CONFIG_FILE}";
 
 FILE="${1}"
+
+if [[ ! command -v http &> /dev/null ]]; then
+  echo "[ERROR] http command not found. Please install httpie.";
+  exit 1;
+fi
 
 http \
   -pb \
@@ -22,4 +44,4 @@ http \
   --pretty none \
   -a "${BASIC_AUTH_CREDS}" \
   "${JENKINS_BASE_URL}/pipeline-model-converter/validate" \
-  jenkinsfile=@${FILE};
+  jenkinsfile=@${JENKINSFILE};
