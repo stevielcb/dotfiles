@@ -237,7 +237,7 @@ export NVM_DIR="$HOME/.nvm"
 ###############
 #### tmux #####
 ###############
-[[ $(whoami) != "root" ]] && ZSH_TMUX_AUTOSTART=true
+[[ $(whoami) != "root" ]] && [[ $TERM_PROGRAM != "vscode" ]] && ZSH_TMUX_AUTOSTART=true
 
 ################################################################################
 # powerlevel9k + 10k
