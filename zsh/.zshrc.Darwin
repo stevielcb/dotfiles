@@ -45,6 +45,8 @@ function install_prereqs_darwin() {
     nyancat \
     packer \
     pgcli \
+    pipenv \
+    poetry \
     ponysay \
     prettier \
     prettyping \
@@ -94,20 +96,14 @@ function install_prereqs_darwin() {
   do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
     ( cd ~/.vim/bundle/YouCompleteMe && \
       git submodule update --init --recursive --recommend-shallow && \
-      /opt/homebrew/opt/python@3.11/bin/python3 ./install.py ${YCM_FLAGS[@]} \
+      /opt/homebrew/opt/python@3.13/bin/python3 ./install.py ${YCM_FLAGS[@]} \
     )
 
-  # pipenv
-  pip3 install -U pipenv
-
-  # poetry
-  pip3 install -U poetry
-
   # Neovim python support (for YCM)
-  pip3 install -U pynvim
+  pip3 install -U pynvim --break-system-packages
 
   # Supercharged AWS
-  pip3 install -U saws
+  pip3 install -U saws --break-system-packages
 
   # vim-instant-markdown
   do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
@@ -153,7 +149,7 @@ alias ss="sudo -Es"
 
 export GOPATH="${HOME}/go"
 export PATH="${GOPATH}/bin:${HOME}/.cargo/bin:${PATH}"
-export PATH="/opt/homebrew/opt/python@3.11/bin:$PATH"
+export PATH="/opt/homebrew/opt/python@3.13/bin:$PATH"
 
 ZSH_PLUGINS+=(
   brew
