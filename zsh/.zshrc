@@ -127,6 +127,9 @@ function install_prereqs_common() {
   # Indent Guides
   do_git_update ~/.vim/bundle/vim-indent-guides https://github.com/nathanaelkane/vim-indent-guides
 
+  # fzf
+  do_git_update ~/.vim/bundle/fzf https://github.com/junegunn/fzf
+
   # fzf.vim
   do_git_update ~/.vim/bundle/fzf.vim https://github.com/junegunn/fzf.vim
 
