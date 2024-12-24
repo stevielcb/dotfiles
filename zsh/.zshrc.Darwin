@@ -7,9 +7,10 @@
 # And you'll also need stow already, obviously: `brew install stow`
 
 PREREQS_VERSION="202412-23"
+HOMEBREW_BIN="/opt/homebrew/bin/brew"
 
 function install_prereqs_darwin() {
-  /opt/homebrew/bin/brew install \
+  ${HOMEBREW_BIN} install \
     ack \
     asciinema \
     asciiquarium \
@@ -63,15 +64,15 @@ function install_prereqs_darwin() {
     z \
     zsh-syntax-highlighting
 
-  /opt/homebrew/bin/brew install \
+  ${HOMEBREW_BIN} install \
     vagrant \
     --cask
 
-  /opt/homebrew/bin/brew install \
+  ${HOMEBREW_BIN} install \
     homebrew/cask-fonts/font-fira-code-nerd-font \
     --cask
 
-  /opt/homebrew/bin/brew install \
+  ${HOMEBREW_BIN} install \
     --HEAD universal-ctags/universal-ctags/universal-ctags
 
   # For vim-devicons fzf integration
