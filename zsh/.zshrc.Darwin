@@ -78,14 +78,14 @@ function install_prereqs_darwin() {
   cargo install devicon-lookup
 
   # MOTD server+client
-  go get -u github.com/stevielcb/motd-server
-  go get -u github.com/stevielcb/motd-client
+  go install github.com/stevielcb/motd-server@latest
+  go install github.com/stevielcb/motd-client@latest
 
   # Sift
-  go get -u github.com/svent/sift
+  go install github.com/svent/sift@latest
 
   # Wuzz - interactive HTTP inspection
-  go get -u github.com/asciimoo/wuzz
+  go install github.com/asciimoo/wuzz@latest
 
   # Tmuxinator
   sudo gem install tmuxinator
