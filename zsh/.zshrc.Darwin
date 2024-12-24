@@ -91,6 +91,11 @@ function install_prereqs_darwin() {
   sudo gem install tmuxinator
 
   # YouCompleteMe
+  # Flags for YouCompleteMe installation:
+  # --clang-completer: Enables C-family language support
+  # --go-completer: Enables Go language support
+  # --ts-completer: Enables TypeScript language support
+  # --rust-completer: Enables Rust language support
   YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
   do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
     ( cd ~/.vim/bundle/YouCompleteMe && \
