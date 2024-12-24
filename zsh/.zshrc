@@ -498,13 +498,13 @@ export NODE_OPTIONS="--no-warnings"
 ################################################################################
 
 # # Only start motd-server when you aren't in an SSH session
-# (( ${+SSH_CLIENT} )) && motd-server &!
+(( ${+SSH_CLIENT} )) || motd-server &!
 # # Only run motd-client if motd-server is detected
-# pgrep motd-server 2>&1 >/dev/null && motd-client
+[[ $TERM_PROGRAM == "vscode" ]] && pgrep motd-server 2>&1 >/dev/null && motd-client
 
 # Show some ponies, but only if there's room
 TERM_HEIGHT=$(tput lines)
-if [ $TERM_HEIGHT -gt 20 ]; then
+if [ $TERM_HEIGHT -gt 20 ] && [[ $TERM_PROGRAM != "vscode" ]]; then
   fortune | ponysay
 fi
 
