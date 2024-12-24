@@ -9,7 +9,7 @@
 #  For ponysay
 # 3. texinfo
 # 4. python36
-#  For exa:
+#  For eza:
 # 5. rust
 # 6. cmake
 # 7. cargo
@@ -83,12 +83,12 @@ EOF
       /bin/mv -f ~/.local/bin/pony* ~/bin/ )
   fi
 
-  # exa
-  if ! cmd_exists exa; then
-    ( git clone https://github.com/ogham/exa.git ~/exa && \
-      cd ~/exa && \
+  # eza
+  if ! cmd_exists eza; then
+    ( git clone https://github.com/eza-community/eza.git ~/eza && \
+      cd ~/eza && \
       cargo build --release && \
-      /bin/mv -f ./target/release/exa ~/bin/ )
+      /bin/mv -f ./target/release/eza ~/bin/ )
   fi
 
   # YouCompleteMe
@@ -153,7 +153,7 @@ function install_prereqs_linux_ubuntu() {
     csvkit \
     diff-so-fancy \
     dos2unix \
-    exa \
+    eza \
     fzf \
     glances \
     howdoi \
@@ -220,7 +220,7 @@ function install_prereqs_linux_arch() {
     bison \
     datamash \
     diff-so-fancy \
-    exa \
+    eza \
     fortune-mod \
     fzf \
     gcc \
