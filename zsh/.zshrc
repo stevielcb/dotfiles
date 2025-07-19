@@ -492,13 +492,14 @@ export FZF_DEFAULT_COMMAND="rg --hidden --files --smart-case --glob '!.git/*' 2>
 ################################################################################
 
 export NODE_OPTIONS="--no-warnings"
+export POETRY_CONFIG_DIR="/Users/stevie/.config/poetry"
 
 ################################################################################
 # Login
 ################################################################################
 
-# # Only start motd-server when you aren't in an SSH session
-(( ${+SSH_CLIENT} )) || motd-server &!
+# # Only start motd-server when you aren't in an SSH session and it's not already running
+(( ${+SSH_CLIENT} )) || pgrep motd-server >/dev/null 2>&1 || motd-server &!
 # # Only run motd-client if motd-server is detected
 [[ $TERM_PROGRAM == "vscode" ]] && pgrep motd-server 2>&1 >/dev/null && motd-client
 

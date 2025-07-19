@@ -28,6 +28,7 @@ function install_prereqs_darwin() {
     fortune \
     fzf \
     gawk \
+    gh \
     glances \
     glide \
     go \
@@ -155,6 +156,7 @@ alias ss="sudo -Es"
 # Environment Variables
 ################################################################################
 
+export DOTNET_ROOT="/usr/local/share/dotnet"
 export GOPATH="${HOME}/go"
 export GOROOT="$(brew --prefix golang)/libexec"
 export PATH="${GOPATH}/bin:${GOROOT}:${HOME}/.cargo/bin:${PATH}"
