@@ -1,364 +1,53 @@
-################################################################################
-# Software Compliance
-################################################################################
+# Linux-specific runtime configuration
+# This file is sourced at shell startup and should be fast and non-interactive
+# All package installation and setup is handled by 'dotfiles bootstrap'
 
-# You'll need a few things before this will work:
-############## Fedora/CentOS ###################
-# 1. stow
-# 2. git
-#  For ponysay
-# 3. texinfo
-# 4. python36
-#  For eza:
-# 5. rust
-# 6. cmake
-# 7. cargo
-# 8. libgit2
-# 9. zlib-devel
-################### Ubuntu #####################
-# 1. stow
-# 2. git
-#  For ponysay
-# 3. texinfo
-# 4. python3
-#################### Arch ######################
-# 1. stow
-# 2. git
-
-PREREQS_VERSION="201907-08"
-
-function install_prereqs_linux() {
-  egrep -i '(fedora|centos)' /etc/os-release >/dev/null && install_prereqs_linux_redhat
-  egrep -i 'ubuntu' /etc/os-release >/dev/null && install_prereqs_linux_ubuntu
-  egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && install_prereqs_linux_arch
-
-  # Update build # to prevent the prereq check happening too often
-  echo -n "${PREREQS_VERSION}" > ${PREREQS}
-}
-
-function install_prereqs_linux_redhat() {
-  echo "Installing prerequisites ..."
-  sudo zsh << EOF
-curl -Lq https://download.opensuse.org/repositories/shells:zsh-users:zsh-syntax-highlighting/CentOS_7/shells:zsh-users:zsh-syntax-highlighting.repo > /etc/yum.repos.d/zsh-syntax-highlighting.repo
-EOF
-
-  sudo yum install -y centos-release-scl
-
-  sudo yum-config-manager --enable rhel-server-rhscl-7-rpms
-
-  sudo yum install -y \
-    devtoolset-8 \
-    fortune-mod \
-    gcc-c++ \
-    glide \
-    golang \
-    libstdc++-devel \
-    ncurses-devel \
-    neovim \
-    python-devel \
-    python36-devel \
-    python36-neovim \
-    zsh-syntax-highlighting
-
-  # Make sure we have GhettoForge
-  if ! [ -f /etc/yum.repos.d/gf.repo ]; then
-    sudo rpm -Uvh --reinstall http://mirror.ghettoforge.org/distributions/gf/gf-release-latest.gf.el7.noarch.rpm
-    rpm --import http://mirror.ghettoforge.org/distributions/gf/RPM-GPG-KEY-gf.el7
-  fi
-
-  sudo yum install -y \
-    --enablerepo=gf-plus \
-    zsh
-
-  # ponysay
-  if ! [ -d ~/ponysay ]; then
-    ( git clone https://github.com/erkin/ponysay ~/ponysay && \
-      cd ~/ponysay && \
-      python3 setup.py --freedom=partial --private install && \
-      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
-  else
-    ( cd ~/ponysay && \
-      git pull && \
-      python3 setup.py --freedom=partial --private install && \
-      /bin/mv -f ~/.local/bin/pony* ~/bin/ )
-  fi
-
-  # eza
-  if ! cmd_exists eza; then
-    ( git clone https://github.com/eza-community/eza.git ~/eza && \
-      cd ~/eza && \
-      cargo build --release && \
-      /bin/mv -f ./target/release/eza ~/bin/ )
-  fi
-
-  # YouCompleteMe
-  if ! [ -d ~/.vim/bundle/YouCompleteMe ]; then
-    YCM_FLAGS=(--clang-completer --go-completer --rust-completer)
-    do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
-      ( cd ~/.vim/bundle/YouCompleteMe && \
-        git submodule update --init --recursive && \
-        source /opt/rh/devtoolset-8/enable && \
-        python3 ./install.py ${YCM_FLAGS[@]} \
-      )
-  fi
-
-  install_prereqs_common
-}
-
-function install_prereqs_linux_ubuntu() {
-  echo "Installing prerequisites ..."
-
-  sudo add-apt-repository -y ppa:neovim-ppa/stable
-
-  sudo apt install -y \
-    cmatrix \
-    datamash \
-    fortune-mod \
-    g++ \
-    golang \
-    golang-glide \
-    golang-golang-x-tools \
-    htop \
-    httpie \
-    jq \
-    libstdc++-8-dev \
-    libncurses-dev \
-    ncdu \
-    python-dev \
-    python3-dev \
-    vim-youcompleteme
-
-  # LinuxBrew
-  if ! [ -d /home/linuxbrew ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-  fi
-
-  # Universal Ctags
-  brew install \
-    --HEAD universal-ctags/universal-ctags/universal-ctags
-
-  brew install \
-    libpcap
-
-  brew install \
-    ack \
-    asciinema \
-    autoconf \
-    automake \
-    bat \
-    bvi \
-    cask \
-    cmake \
-    colordiff \
-    csvkit \
-    diff-so-fancy \
-    dos2unix \
-    eza \
-    fzf \
-    glances \
-    howdoi \
-    iftop \
-    libmagic \
-    libtool \
-    mycli \
-    neovim \
-    node \
-    npm \
-    nyancat \
-    packer \
-    pgcli \
-    pkg-config \
-    ponysay \
-    prettyping \
-    ripgrep \
-    rust \
-    task \
-    tldr \
-    urlview
-
-  brew install \
-    tmux --HEAD
-
-  # Python packages
-  sudo pip install -U \
-    pipenv \
-    poetry \
-    powerline-status \
-    saws
-
-  install_prereqs_common
-
-  # MOTD server+client
-  go get -u github.com/stevielcb/motd-server
-  go get -u github.com/stevielcb/motd-client
-
-  # Sift
-  go get -u github.com/svent/sift
-
-  # FiraCode Nerd Fonts for Powerlevel10k
-  FC_FONT="${HOME}/.fonts/Fura Code Bold Nerd Font Complete.ttf"
-  if ! [ -f ${FC_FONT} ]; then
-    mkdir -p ~/.fonts
-    TMP_ZIP="${HOME}/FiraCode.zip"
-    curl -Ls https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip > ${TMP_ZIP} && \
-      unzip -u -d ~/.fonts/ ${TMP_ZIP} && \
-      /bin/rm -f ${TMP_ZIP}
-    fc-cache -v
-  fi
-
-  # js-beautify
-  npm install -g js-beautify
-
-  # npm-groovy-lint
-  npm install -g npm-groovy-lint
-}
-
-function install_prereqs_linux_arch() {
-  echo "Installing prerequisites ..."
-  sudo pacman -Syu --needed --noconfirm \
-    bat \
-    bison \
-    datamash \
-    diff-so-fancy \
-    eza \
-    fortune-mod \
-    fzf \
-    gcc \
-    glances \
-    glide \
-    go-pie \
-    golang-golang-x-tools \
-    htop \
-    httpie \
-    jq \
-    ncdu \
-    neovim \
-    prettyping \
-    python-docutils \
-    python-neovim \
-    python-pip \
-    python-psycopg2 \
-    ripgrep \
-    tldr \
-    unzip \
-    z
-
-  # LinuxBrew
-  if ! [ -d /home/linuxbrew ]; then
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-  fi
-
-  # Universal Ctags
-  brew install \
-    --HEAD universal-ctags/universal-ctags/universal-ctags
-
-  brew install \
-    asciinema \
-    bvi \
-    cask \
-    cmake \
-    cmatrix \
-    colordiff \
-    csvkit \
-    dos2unix \
-    iftop \
-    libmagic \
-    libtool \
-    mycli \
-    node \
-    npm \
-    nyancat \
-    pgcli \
-    ponysay \
-    rust \
-    task \
-    urlview
-
-  brew install \
-    tmux --HEAD
-
-  # Python packages
-  sudo pip install -U \
-    powerline-status \
-    saws
-
-  # Python3 packages
-  sudo pip3 install -U \
-    neovim \
-    pipenv \
-    poetry
-
-  install_prereqs_common
-
-  # MOTD server+client
-  go get -u github.com/stevielcb/motd-server
-  go get -u github.com/stevielcb/motd-client
-
-  # Sift
-  go get -u github.com/svent/sift
-
-  # FiraCode Nerd Fonts for Powerlevel10k
-  FC_FONT="${HOME}/.fonts/Fura Code Bold Nerd Font Complete.ttf"
-  if ! [ -f ${FC_FONT} ]; then
-    mkdir -p ~/.fonts
-    TMP_ZIP="${HOME}/FiraCode.zip"
-    curl -Ls https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip > ${TMP_ZIP} && \
-      unzip -u -d ~/.fonts/ ${TMP_ZIP} && \
-      /bin/rm -f ${TMP_ZIP}
-    fc-cache -v
-  fi
-
-  # js-beautify
-  npm install -g js-beautify
-
-  # npm-groovy-lint
-  npm install -g npm-groovy-lint
-}
-
-# Ensure LinuxBrew is in the PATH before we try installing stuff
-export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-
-# Check if we need to install software
-if ! [ -f ${PREREQS} ]; then
-  # We haven't done a prereq install if this file doesn't already exist
-  install_prereqs_linux
-else
-  # The contents of the $PREREQS file will just be a build number. When the
-  # prereqs need to be updated, $PREREQS_VERSION should be incremented.
-  LAST_UPDATE=$(cat ${PREREQS})
-  if [ "${LAST_UPDATE}" != "${PREREQS_VERSION}" ]; then
-    install_prereqs_linux
-  fi
-fi;
-
-################################################################################
-# Aliases
-################################################################################
-
+# Additional Linux-specific aliases
 alias ss="sudo --preserve-env=HOME -s"
 
-################################################################################
-# Environment Variables
-################################################################################
+# LinuxBrew PATH (if installed)
+if [[ -d "/home/linuxbrew/.linuxbrew/bin" ]]; then
+  path=(
+    "/home/linuxbrew/.linuxbrew/bin"
+    $path
+  )
+fi
 
+# Additional PATH for local vim builds
+if [[ -d "${HOME}/.local/vim/bin" ]]; then
+  path=(
+    "${HOME}/.local/vim/bin"
+    $path
+  )
+fi
+
+# Additional Oh-My-Zsh plugins for Linux
 ZSH_PLUGINS+=(
   brew
   cask
   systemd
 )
 
-egrep -i 'ubuntu' /etc/os-release >/dev/null && ZSH_PLUGINS+=(ubuntu ufw)
-egrep -i 'fedora' /etc/os-release >/dev/null && ZSH_PLUGINS+=(dnf)
-egrep -i 'centos' /etc/os-release >/dev/null && ZSH_PLUGINS+=(yum)
-egrep -i '(arch|manjaro)' /etc/os-release >/dev/null && ZSH_PLUGINS+=(archlinux)
+# Detect Linux distribution and add distro-specific plugins
+if [[ -f /etc/os-release ]]; then
+  local os_id
+  os_id=$(grep -i "^ID=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+  
+  case "${os_id}" in
+    ubuntu)
+      ZSH_PLUGINS+=(ubuntu ufw)
+      ;;
+    fedora)
+      ZSH_PLUGINS+=(dnf)
+      ;;
+    centos|rhel)
+      ZSH_PLUGINS+=(yum)
+      ;;
+    arch|manjaro)
+      ZSH_PLUGINS+=(archlinux)
+      ;;
+  esac
+fi
 
-# ZSH_SYNTAX=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# egrep -i "(alpine|arch|manjaro)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# egrep -i "(arch)" /etc/os-release 2>&1 >/dev/null && ZSH_SYNTAX=/usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-ZSH_THEME="powerlevel10k/powerlevel10k"
-ZSH_COLORIZE_STYLE="friendly"
-
+# Powerlevel10k right prompt elements
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history)
-
-export PATH="${HOME}/.local/vim/bin:${PATH}"

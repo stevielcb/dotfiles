@@ -13,19 +13,31 @@
 # - If no session with the current directory name exists, it creates a new detached session with that name.
 # - It then switches the tmux client to the session with the current directory name.
 
-export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH}"
-TMUX_CMD="/opt/homebrew/bin/tmux"
+# Find tmux command (prefer Homebrew, fallback to system)
+if [[ -x "/opt/homebrew/bin/tmux" ]]; then
+  TMUX_CMD="/opt/homebrew/bin/tmux"
+elif [[ -x "/usr/local/bin/tmux" ]]; then
+  TMUX_CMD="/usr/local/bin/tmux"
+elif command -v tmux >/dev/null 2>&1; then
+  TMUX_CMD=$(command -v tmux)
+else
+  echo "Error: tmux not found" >&2
+  exit 1
+fi
 
 SESSION="$(basename "$(pwd)")"
 
-if [[ -z "$TMUX" ]]; then
-  eval ${TMUX_CMD} attach-session -d -t "$SESSION" || eval ${TMUX_CMD} new-session -s "$SESSION";
+if [[ -z "${TMUX:-}" ]]; then
+  # Not in tmux - attach or create session
+  "${TMUX_CMD}" attach-session -d -t "$SESSION" 2>/dev/null || \
+    "${TMUX_CMD}" new-session -s "$SESSION"
 else
-  SESSION_LIST="$(eval ${TMUX_CMD} ls)"
-  FOUND_SESSION="$(echo \"${SESSION_LIST}\" | grep \"${SESSION}\")"
-  if [[ -z "${FOUND_SESSION}" ]]; then
-    eval ${TMUX_CMD} new -s "${SESSION}" -d;
+  # Already in tmux - switch to or create session
+  SESSION_LIST=$("${TMUX_CMD}" ls 2>/dev/null || echo "")
+  if echo "$SESSION_LIST" | grep -q "^${SESSION}:"; then
+    "${TMUX_CMD}" switch-client -t "$SESSION"
+  else
+    "${TMUX_CMD}" new-session -s "$SESSION" -d
+    "${TMUX_CMD}" switch-client -t "$SESSION"
   fi
-
-  eval ${TMUX_CMD} switch-client -t "$SESSION";
 fi
