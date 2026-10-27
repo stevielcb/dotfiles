@@ -13,7 +13,7 @@ fi
 
 # Tmux autostart configuration (must be set before Oh-My-Zsh loads)
 # Only configure for interactive shells, non-root, and not in vscode
-if [[ -o interactive ]] && [[ "$(whoami)" != "root" ]] && [[ "${TERM_PROGRAM:-}" != "vscode" ]]; then
+if [[ -o interactive ]] && (( EUID != 0 )) && [[ "${TERM_PROGRAM:-}" != "vscode" ]]; then
   export ZSH_TMUX_AUTOSTART=true
   # CRITICAL: Set AUTOQUIT to false so shell stays open if tmux fails/exits
   # This prevents the window from closing when tmux encounters errors
@@ -32,16 +32,13 @@ if (( $+aliases[tmux] )); then
   alias tmux="nocorrect $tmux_alias"
 fi
 
-# MOTD client (only in vscode if motd-server is running)
-if [[ "${TERM_PROGRAM:-}" == "vscode" ]]; then
+# MOTD: show the banner under vscode, and start the server when it isn't
+# already running. Both branches need to know whether the server is up, so
+# check once - pgrep is the most expensive call in this file.
+if [[ "${TERM_PROGRAM:-}" == "vscode" ]] || [[ -z "${SSH_CLIENT:-}" ]]; then
   if pgrep motd-server >/dev/null 2>&1; then
-    motd-client 2>/dev/null || true
-  fi
-fi
-
-# MOTD server (only start when not in SSH and not already running)
-if [[ -z "${SSH_CLIENT:-}" ]] && ! pgrep motd-server >/dev/null 2>&1; then
-  if command -v motd-server >/dev/null 2>&1; then
+    [[ "${TERM_PROGRAM:-}" == "vscode" ]] && { motd-client 2>/dev/null || true }
+  elif [[ -z "${SSH_CLIENT:-}" ]] && command -v motd-server >/dev/null 2>&1; then
     motd-server &! 2>/dev/null || true
   fi
 fi

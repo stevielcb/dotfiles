@@ -43,11 +43,9 @@ setopt NO_HUP                 # Don't kill jobs on shell exit
 setopt NO_NOMATCH             # Don't error on unmatched patterns
 setopt RM_STAR_WAIT           # Wait 10 seconds before rm *
 
-# Enable completion system
-# Use -C flag to skip security check (we handle this via 'dotfiles doctor')
-# This prevents shell from exiting if there are permission issues
-autoload -Uz compinit
-compinit -C 2>/dev/null || compinit 2>/dev/null || true
+# The completion system is initialized by Oh-My-Zsh, which keeps its own cached
+# dump. .zshrc runs compinit as a fallback only when Oh-My-Zsh isn't installed,
+# so don't call it here as well - that builds a second dump for nothing.
 
 # Completion waiting dots
 COMPLETION_WAITING_DOTS="true"

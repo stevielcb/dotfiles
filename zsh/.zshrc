@@ -79,6 +79,11 @@ if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
   source "$ZSH/oh-my-zsh.sh" 2>/dev/null || {
     echo "Warning: Failed to load Oh-My-Zsh. Run 'dotfiles bootstrap' to install." >&2
   }
+else
+  # Oh-My-Zsh normally initializes the completion system. Without it, do the
+  # bare minimum here so tab completion still works.
+  autoload -Uz compinit
+  compinit -C 2>/dev/null || compinit 2>/dev/null || true
 fi
 
 # Load fzf key-bindings and completion AFTER Oh-My-Zsh so Ctrl-R (and other fzf bindings)

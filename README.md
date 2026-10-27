@@ -148,7 +148,18 @@ dotfiles help
 
 ## What Runs at Shell Startup?
 
-**Nothing heavy!** Your shell startup is now fast and non-interactive:
+Startup is predictable: it reads configuration and nothing else. Measured on an
+Apple Silicon Mac, an interactive login shell takes roughly the same time as the
+previous single-file `.zshrc` (~440 ms median, dominated by Oh-My-Zsh and
+Powerlevel10k) — splitting the config across several files costs nothing
+noticeable.
+
+The change isn't raw speed, it's that startup can no longer surprise you. The
+old `.zshrc.Darwin`/`.zshrc.Linux` compared a build stamp against a hardcoded
+version on every launch and ran a full `brew install` inline when they differed,
+so opening a terminal could block for minutes. Nothing installs at startup now.
+
+Loaded at startup:
 
 - ✅ Environment variables (PATH, EDITOR, etc.)
 - ✅ Zsh options and completion
