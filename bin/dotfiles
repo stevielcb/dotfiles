@@ -1,0 +1,807 @@
+#!/usr/bin/env zsh
+# Dotfiles management CLI
+# Handles bootstrap, update, and doctor commands
+
+set -euo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Helper functions
+log_info() {
+  echo "${BLUE}ℹ${NC} $*"
+}
+
+log_success() {
+  echo "${GREEN}✓${NC} $*"
+}
+
+log_warn() {
+  echo "${YELLOW}⚠${NC} $*"
+}
+
+log_error() {
+  echo "${RED}✗${NC} $*" >&2
+}
+
+# Safe command existence check
+cmd_exists() {
+  command -v -- "$1" >/dev/null 2>&1
+}
+
+# Safe curl wrapper
+safe_curl() {
+  local url="$1"
+  shift
+  curl \
+    --fail \
+    --show-error \
+    --location \
+    --compressed \
+    --connect-timeout 10 \
+    --max-time 30 \
+    "$@" \
+    "$url"
+}
+
+# Git update helper (clone or pull)
+do_git_update() {
+  local dest="$1"
+  local repo="$2"
+  
+  if [[ ! -d "$dest" ]]; then
+    log_info "Cloning $repo to $dest"
+    git clone --depth 1 "$repo" "$dest"
+  else
+    log_info "Updating $dest"
+    (cd "$dest" && git pull --quiet || log_warn "Failed to update $dest")
+  fi
+}
+
+# Bootstrap functions
+install_prereqs_common() {
+  log_info "Installing common prerequisites (Oh-My-Zsh, plugins, vim plugins, tmux plugins)"
+  
+  # Oh-My-Zsh!
+  do_git_update ~/.oh-my-zsh https://github.com/robbyrussell/oh-my-zsh
+  
+  # Poetry plugin
+  local poetry_plugin_dir="${HOME}/.oh-my-zsh/custom/plugins/poetry"
+  if [[ ! -d "$poetry_plugin_dir" ]]; then
+    mkdir -p "$poetry_plugin_dir"
+    if cmd_exists poetry; then
+      poetry completions zsh > "${poetry_plugin_dir}/_poetry" || log_warn "Failed to generate poetry completions"
+    fi
+  fi
+  
+  # zsh plugins
+  do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions https://github.com/zsh-users/zsh-autosuggestions
+  do_git_update ~/.oh-my-zsh/custom/plugins/zsh-autopair https://github.com/hlissner/zsh-autopair
+  do_git_update ~/.oh-my-zsh/custom/plugins/F-Sy-H https://github.com/zdharma/fast-syntax-highlighting
+  
+  # Powerlevel10k
+  do_git_update ~/.oh-my-zsh/custom/themes/powerlevel10k https://github.com/romkatv/powerlevel10k.git
+  
+  # Vim plugins
+  if [[ ! -d ~/.vim/autoload ]]; then
+    mkdir -p ~/.vim/autoload ~/.vim/bundle
+    safe_curl https://tpo.pe/pathogen.vim -o ~/.vim/autoload/pathogen.vim
+  fi
+  
+  local vim_plugins=(
+    "https://github.com/neoclide/coc.nvim:~/.vim/bundle/coc.nvim"
+    "https://github.com/tpope/vim-fugitive:~/.vim/bundle/vim-fugitive"
+    "https://github.com/vim-airline/vim-airline:~/.vim/bundle/vim-airline"
+    "https://github.com/vim-airline/vim-airline-themes:~/.vim/bundle/vim-airline-themes"
+    "https://github.com/kana/vim-arpeggio:~/.vim/bundle/vim-arpeggio"
+    "https://github.com/numirias/semshi:~/.vim/bundle/semshi"
+    "https://github.com/elzr/vim-json:~/.vim/bundle/vim-json"
+    "https://github.com/scrooloose/nerdtree:~/.vim/bundle/nerdtree"
+    "https://github.com/Xuyuanp/nerdtree-git-plugin:~/.vim/bundle/nerdtree-git-plugin"
+    "https://github.com/scrooloose/nerdcommenter:~/.vim/bundle/nerdcommenter"
+    "https://github.com/godlygeek/tabular:~/.vim/bundle/tabular"
+    "https://github.com/maksimr/vim-jsbeautify:~/.vim/bundle/vim-jsbeautify"
+    "https://github.com/mattn/emmet-vim:~/.vim/bundle/emmet-vim"
+    "https://github.com/airblade/vim-gitgutter:~/.vim/bundle/vim-gitgutter"
+    "https://github.com/tpope/vim-obsession:~/.vim/bundle/vim-obsession"
+    "https://github.com/cespare/vim-toml:~/.vim/bundle/vim-toml"
+    "https://github.com/pangloss/vim-javascript:~/.vim/bundle/vim-javascript"
+    "https://github.com/leafgarland/typescript-vim:~/.vim/bundle/typescript-vim"
+    "https://github.com/MaxMEllon/vim-jsx-pretty:~/.vim/bundle/vim-jsx-pretty"
+    "https://github.com/peitalin/vim-jsx-typescript:~/.vim/bundle/vim-jsx-typescript"
+    "https://github.com/styled-components/vim-styled-components:~/.vim/bundle/vim-styled-components"
+    "https://github.com/jparise/vim-graphql:~/.vim/bundle/vim-graphql"
+    "https://github.com/dense-analysis/ale:~/.vim/bundle/ale"
+    "https://github.com/nathanaelkane/vim-indent-guides:~/.vim/bundle/vim-indent-guides"
+    "https://github.com/junegunn/fzf:~/.vim/bundle/fzf"
+    "https://github.com/junegunn/fzf.vim:~/.vim/bundle/fzf.vim"
+    "https://github.com/majutsushi/tagbar:~/.vim/bundle/tagbar"
+    "https://github.com/ryanoasis/vim-devicons:~/.vim/bundle/vim-devicons"
+    "https://github.com/NLKNguyen/papercolor-theme:~/.vim/bundle/papercolor-theme"
+    "https://github.com/tmux-plugins/vim-tmux-focus-events:~/.vim/bundle/vim-tmux-focus-events"
+  )
+  
+  for plugin in "${vim_plugins[@]}"; do
+    # Split on colon - repo:dest format
+    # URLs contain colons (https://), so we need to find the last colon before a path
+    # Format: "https://github.com/user/repo:~/.vim/bundle/repo"
+    local repo dest
+    # Find the last colon that's followed by ~ or / (indicating a path)
+    if [[ "$plugin" =~ ^(.+):([~/].+)$ ]]; then
+      repo="${match[1]}"
+      dest="${match[2]}"
+    else
+      log_warn "Invalid plugin format: $plugin (expected repo:dest)"
+      continue
+    fi
+    do_git_update "$dest" "$repo"
+  done
+  
+  # vim-jsbeautify submodules
+  if [[ -d ~/.vim/bundle/vim-jsbeautify ]]; then
+    (cd ~/.vim/bundle/vim-jsbeautify && git submodule update --init --recursive --quiet || true)
+  fi
+  
+  # Neovim auto-sourcing .vimrc + .vim
+  if [[ ! -f ~/.config/nvim/init.vim ]]; then
+    mkdir -p ~/.config/nvim
+    cat > ~/.config/nvim/init.vim << 'EOF'
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+source ~/.vimrc
+EOF
+  fi
+  
+  # Tmux plugins
+  do_git_update ~/.tmux/plugins/tpm https://github.com/tmux-plugins/tpm
+  do_git_update ~/.tmux/plugins/tmux-sensible https://github.com/tmux-plugins/tmux-sensible
+  do_git_update ~/.tmux/plugins/tmux-resurrect https://github.com/tmux-plugins/tmux-resurrect
+  do_git_update ~/.tmux/plugins/tmux-continuum https://github.com/tmux-plugins/tmux-continuum
+  do_git_update ~/.tmux/plugins/tmux-copycat https://github.com/tmux-plugins/tmux-copycat
+  do_git_update ~/.tmux/plugins/tmux-urlview https://github.com/tmux-plugins/tmux-urlview
+  do_git_update ~/.tmux/plugins/tmux-pain-control https://github.com/tmux-plugins/tmux-pain-control
+  do_git_update ~/.tmux/plugins/tmux-sessionist https://github.com/tmux-plugins/tmux-sessionist
+  do_git_update ~/.tmux/plugins/tmux-better-mouse-mode https://github.com/NHDaly/tmux-better-mouse-mode
+  do_git_update ~/.tmux/plugins/tmux-tasks https://github.com/chriszarate/tmux-tasks
+  do_git_update ~/.tmux/plugins/tmux-prefix-highlight https://github.com/tmux-plugins/tmux-prefix-highlight
+  do_git_update ~/.tmux/plugins/extrakto https://github.com/laktak/extrakto
+  
+  log_success "Common prerequisites installed"
+}
+
+install_prereqs_darwin() {
+  log_info "Installing macOS prerequisites"
+  
+  local homebrew_bin="/opt/homebrew/bin/brew"
+  if [[ ! -f "$homebrew_bin" ]]; then
+    homebrew_bin="/usr/local/bin/brew"
+  fi
+  
+  if [[ ! -f "$homebrew_bin" ]]; then
+    log_error "Homebrew not found. Please install Homebrew first: https://brew.sh/"
+    return 1
+  fi
+  
+  # Packages intentionally not installed:
+  #   glide     - unmaintained; Go modules replaced it
+  #   pup       - installed from source below instead
+  #   tldr      - superseded by tealdeer
+  #   ponysay   - no longer used by the startup banner
+  #   termshark - no longer used
+  # Keep notes here, never inside the argument list: a comment ends the
+  # logical line and silently truncates a backslash-continued command.
+  log_info "Installing Homebrew packages..."
+  "$homebrew_bin" install \
+    ack \
+    asciinema \
+    asciiquarium \
+    bat \
+    bvi \
+    cask \
+    cmake \
+    cmatrix \
+    colordiff \
+    csvkit \
+    datamash \
+    diff-so-fancy \
+    dos2unix \
+    eza \
+    fortune \
+    fzf \
+    gawk \
+    gh \
+    glances \
+    go \
+    howdoi \
+    htop \
+    httpie \
+    iftop \
+    lastpass-cli \
+    libmagic \
+    mycli \
+    ncdu \
+    neovim \
+    node \
+    npm \
+    nvm \
+    nyancat \
+    pgcli \
+    pipenv \
+    poetry \
+    prettier \
+    prettyping \
+    reattach-to-user-namespace \
+    ripgrep \
+    rust \
+    stow \
+    task \
+    tealdeer \
+    tmux \
+    urlview \
+    vim \
+    z \
+    zsh-syntax-highlighting || log_warn "Some packages failed to install"
+  
+  "$homebrew_bin" install --cask vagrant || log_warn "Failed to install vagrant"
+  "$homebrew_bin" install --cask homebrew/cask-fonts/font-fira-code-nerd-font || log_warn "Failed to install font"
+  "$homebrew_bin" install --HEAD universal-ctags/universal-ctags/universal-ctags || log_warn "Failed to install universal-ctags"
+  
+  # Cargo installs
+  if cmd_exists cargo; then
+    log_info "Installing cargo packages..."
+    cargo install devicon-lookup || log_warn "Failed to install devicon-lookup"
+  fi
+  
+  # Go installs
+  if cmd_exists go; then
+    log_info "Installing Go packages..."
+    go install github.com/ericchiang/pup@latest || log_warn "Failed to install pup" 
+    go install github.com/stevielcb/motd-server@latest || log_warn "Failed to install motd-server"
+    go install github.com/stevielcb/motd-client@latest || log_warn "Failed to install motd-client"
+    go install github.com/svent/sift@latest || log_warn "Failed to install sift"
+    go install github.com/asciimoo/wuzz@latest || log_warn "Failed to install wuzz"
+  fi
+  
+  # Ruby gems
+  if cmd_exists gem; then
+    log_info "Installing Ruby gems..."
+    sudo gem install tmuxinator || log_warn "Failed to install tmuxinator"
+  fi
+  
+  # YouCompleteMe
+  if [[ ! -d ~/.vim/bundle/YouCompleteMe ]]; then
+    log_info "Installing YouCompleteMe (this may take a while)..."
+    YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
+    do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe
+    if [[ -d ~/.vim/bundle/YouCompleteMe ]]; then
+      (cd ~/.vim/bundle/YouCompleteMe && \
+        git submodule update --init --recursive --recommend-shallow && \
+        /opt/homebrew/opt/python@3.13/bin/python3 ./install.py "${YCM_FLAGS[@]}" || \
+        /usr/local/opt/python@3.13/bin/python3 ./install.py "${YCM_FLAGS[@]}" || \
+        python3 ./install.py "${YCM_FLAGS[@]}" || log_warn "Failed to build YouCompleteMe")
+    fi
+  fi
+  
+  # Python packages (install for the same python3 Neovim uses; see vim/.vimrc g:python3_host_prog)
+  if cmd_exists python3; then
+    log_info "Installing Python packages (pynvim for Neovim provider, saws)..."
+    python3 -m pip install -U pynvim --user 2>/dev/null || \
+      python3 -m pip install -U pynvim --break-system-packages --user 2>/dev/null || \
+      python3 -m pip install -U pynvim --break-system-packages 2>/dev/null || \
+      log_warn "Failed to install pynvim (run: python3 -m pip install --user pynvim)"
+    python3 -m pip install -U saws --user 2>/dev/null || \
+      python3 -m pip install -U saws --break-system-packages --user 2>/dev/null || \
+      python3 -m pip install -U saws --break-system-packages 2>/dev/null || \
+      log_warn "Failed to install saws"
+  fi
+  
+  # GitHub Copilot
+  do_git_update ~/.vim/bundle/copilot.vim https://github.com/github/copilot.vim
+  
+  # vim-instant-markdown
+  do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
+  if cmd_exists npm; then
+    npm install -g instant-markdown-d@next || log_warn "Failed to install instant-markdown-d"
+  fi
+  
+  # npm packages
+  if cmd_exists npm; then
+    log_info "Installing npm packages..."
+    npm install -g bash-language-server || log_warn "Failed to install bash-language-server"
+    npm install -g js-beautify || log_warn "Failed to install js-beautify"
+    npm install -g npm-groovy-lint || log_warn "Failed to install npm-groovy-lint"
+  fi
+  
+  # iTerm2 Shell Integration
+  if [[ ! -f ~/.iterm2_shell_integration.zsh ]]; then
+    log_info "Installing iTerm2 shell integration..."
+    local iterm_installer="/tmp/iterm2_shell_integration.sh"
+    if safe_curl https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh -o "$iterm_installer"; then
+      bash "$iterm_installer" || log_warn "Failed to install iTerm2 integration"
+      rm -f "$iterm_installer"
+    else
+      log_warn "Failed to download the iTerm2 integration installer"
+    fi
+  fi
+  
+  # iTerm2 Utilities
+  if [[ ! -d ~/.iterm2 ]]; then
+    mkdir -p ~/.iterm2
+    local utilities=(imgcat imgls it2attention it2check it2copy it2dl it2getvar it2git it2setcolor it2setkeylabel it2ul it2universion)
+    for util in "${utilities[@]}"; do
+      log_info "Downloading iTerm2 utility: $util"
+      safe_curl "https://iterm2.com/utilities/${util}" -o ~/.iterm2/"${util}" && chmod +x ~/.iterm2/"${util}" || log_warn "Failed to download $util"
+    done
+  fi
+  
+  install_prereqs_common
+  
+  log_success "macOS prerequisites installed"
+}
+
+# Shared helpers for the Linux distro handlers -------------------------------
+
+# Install Homebrew on Linux (Linuxbrew) if it isn't present
+install_linuxbrew() {
+  if [[ -d /home/linuxbrew/.linuxbrew ]] || cmd_exists brew; then
+    return 0
+  fi
+
+  log_info "Installing Homebrew for Linux"
+  # The old Linuxbrew/install repo is retired; Homebrew/install covers Linux now.
+  if safe_curl https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/homebrew-install.sh; then
+    NONINTERACTIVE=1 bash /tmp/homebrew-install.sh || log_warn "Failed to install Homebrew"
+    rm -f /tmp/homebrew-install.sh
+  else
+    log_warn "Failed to download the Homebrew installer"
+  fi
+
+  # Make brew usable for the rest of this run
+  if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  fi
+}
+
+# Packages installed via Homebrew on every Linux distro
+install_brew_packages_linux() {
+  if ! cmd_exists brew; then
+    log_warn "brew not available; skipping Homebrew packages"
+    return 0
+  fi
+
+  log_info "Installing Homebrew packages..."
+  brew install \
+    ack \
+    asciinema \
+    autoconf \
+    automake \
+    bat \
+    bvi \
+    cmake \
+    colordiff \
+    csvkit \
+    diff-so-fancy \
+    dos2unix \
+    eza \
+    fzf \
+    glances \
+    howdoi \
+    iftop \
+    libmagic \
+    libtool \
+    mycli \
+    neovim \
+    node \
+    npm \
+    nyancat \
+    pgcli \
+    pkg-config \
+    prettyping \
+    ripgrep \
+    rust \
+    task \
+    tealdeer \
+    urlview || log_warn "Some Homebrew packages failed to install"
+
+  brew install --HEAD universal-ctags/universal-ctags/universal-ctags || log_warn "Failed to install universal-ctags"
+  brew install --HEAD tmux || log_warn "Failed to install tmux"
+}
+
+# Go, npm and Python tooling shared across distros
+install_lang_tools_linux() {
+  if cmd_exists go; then
+    log_info "Installing Go packages..."
+    # 'go get' stopped installing binaries in Go 1.18; 'go install pkg@latest' replaces it.
+    go install github.com/ericchiang/pup@latest || log_warn "Failed to install pup"
+    go install github.com/stevielcb/motd-server@latest || log_warn "Failed to install motd-server"
+    go install github.com/stevielcb/motd-client@latest || log_warn "Failed to install motd-client"
+    go install github.com/svent/sift@latest || log_warn "Failed to install sift"
+  fi
+
+  if cmd_exists npm; then
+    log_info "Installing npm packages..."
+    npm install -g js-beautify || log_warn "Failed to install js-beautify"
+    npm install -g npm-groovy-lint || log_warn "Failed to install npm-groovy-lint"
+    npm install -g bash-language-server || log_warn "Failed to install bash-language-server"
+  fi
+
+  if cmd_exists python3; then
+    log_info "Installing Python packages..."
+    # Never 'sudo pip install': it fights the system package manager and fails
+    # outright on PEP 668 distros. Match the macOS path instead.
+    local py_packages=(pynvim pipenv poetry powerline-status saws)
+    for pkg in "${py_packages[@]}"; do
+      python3 -m pip install -U "$pkg" --user 2>/dev/null || \
+        python3 -m pip install -U "$pkg" --break-system-packages --user 2>/dev/null || \
+        python3 -m pip install -U "$pkg" --break-system-packages 2>/dev/null || \
+        log_warn "Failed to install $pkg"
+    done
+  fi
+}
+
+# FiraCode Nerd Font, needed by the Powerlevel10k prompt
+install_nerd_font_linux() {
+  local fc_font="${HOME}/.fonts/Fura Code Bold Nerd Font Complete.ttf"
+  [[ -f "$fc_font" ]] && return 0
+
+  log_info "Installing FiraCode Nerd Font..."
+  mkdir -p ~/.fonts
+  local tmp_zip="${HOME}/FiraCode.zip"
+  if safe_curl https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/FiraCode.zip -o "$tmp_zip"; then
+    unzip -u -d ~/.fonts/ "$tmp_zip" || log_warn "Failed to unzip FiraCode"
+    rm -f "$tmp_zip"
+    cmd_exists fc-cache && fc-cache -f
+  else
+    log_warn "Failed to download FiraCode Nerd Font"
+  fi
+}
+
+# Build eza from source where no package exists
+install_eza_from_source() {
+  cmd_exists eza && return 0
+  cmd_exists cargo || { log_warn "cargo not available; skipping eza build"; return 0; }
+
+  log_info "Building eza from source..."
+  do_git_update ~/eza https://github.com/eza-community/eza.git
+  (cd ~/eza && cargo build --release && cp -f ./target/release/eza ~/bin/) || log_warn "Failed to build eza"
+}
+
+# YouCompleteMe, with the completers available on Linux
+install_ycm_linux() {
+  [[ -d ~/.vim/bundle/YouCompleteMe ]] && return 0
+
+  log_info "Installing YouCompleteMe (this may take a while)..."
+  local ycm_flags=(--clang-completer --go-completer --rust-completer)
+  do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe
+  if [[ -d ~/.vim/bundle/YouCompleteMe ]]; then
+    (cd ~/.vim/bundle/YouCompleteMe && \
+      git submodule update --init --recursive --recommend-shallow && \
+      python3 ./install.py "${ycm_flags[@]}") || log_warn "Failed to build YouCompleteMe"
+  fi
+}
+
+# Distro handlers ------------------------------------------------------------
+
+install_prereqs_linux_redhat() {
+  log_info "Installing Fedora/RHEL prerequisites"
+
+  # CentOS 7 (SCL devtoolset-8 + the GhettoForge repo) is end-of-life, so the
+  # old RPM/SCL path is gone; this targets Fedora and RHEL 8+ via dnf.
+  if cmd_exists dnf; then
+    sudo dnf install -y \
+      cmake \
+      fortune-mod \
+      gcc-c++ \
+      golang \
+      jq \
+      libstdc++-devel \
+      ncurses-devel \
+      neovim \
+      python3-devel \
+      python3-neovim \
+      stow \
+      texinfo \
+      zlib-devel \
+      zsh \
+      zsh-syntax-highlighting || log_warn "Some dnf packages failed to install"
+  else
+    log_warn "dnf not found; skipping distro packages"
+  fi
+
+  install_linuxbrew
+  install_brew_packages_linux
+  install_eza_from_source
+  install_lang_tools_linux
+  install_nerd_font_linux
+  install_ycm_linux
+}
+
+install_prereqs_linux_ubuntu() {
+  log_info "Installing Ubuntu/Debian prerequisites"
+
+  if cmd_exists apt; then
+    sudo add-apt-repository -y ppa:neovim-ppa/stable || log_warn "Failed to add neovim PPA"
+    sudo apt update || log_warn "apt update failed"
+    sudo apt install -y \
+      cmake \
+      cmatrix \
+      datamash \
+      fortune-mod \
+      g++ \
+      golang \
+      golang-golang-x-tools \
+      htop \
+      httpie \
+      jq \
+      libncurses-dev \
+      ncdu \
+      neovim \
+      python3-dev \
+      stow \
+      texinfo \
+      zsh || log_warn "Some apt packages failed to install"
+  else
+    log_warn "apt not found; skipping distro packages"
+  fi
+
+  install_linuxbrew
+  if cmd_exists brew; then
+    brew install libpcap || log_warn "Failed to install libpcap"
+  fi
+  install_brew_packages_linux
+  install_lang_tools_linux
+  install_nerd_font_linux
+  install_ycm_linux
+}
+
+install_prereqs_linux_arch() {
+  log_info "Installing Arch/Manjaro prerequisites"
+
+  if cmd_exists pacman; then
+    sudo pacman -Syu --needed --noconfirm \
+      bat \
+      bison \
+      cmake \
+      datamash \
+      diff-so-fancy \
+      eza \
+      fortune-mod \
+      fzf \
+      gcc \
+      glances \
+      go \
+      htop \
+      httpie \
+      jq \
+      ncdu \
+      neovim \
+      prettyping \
+      python-docutils \
+      python-pip \
+      python-psycopg2 \
+      python-pynvim \
+      ripgrep \
+      stow \
+      unzip \
+      z \
+      zsh || log_warn "Some pacman packages failed to install"
+  else
+    log_warn "pacman not found; skipping distro packages"
+  fi
+
+  install_linuxbrew
+  install_brew_packages_linux
+  install_lang_tools_linux
+  install_nerd_font_linux
+  install_ycm_linux
+}
+
+install_prereqs_linux() {
+  log_info "Installing Linux prerequisites"
+
+  local os_id=""
+  local os_id_like=""
+  if [[ -r /etc/os-release ]]; then
+    os_id=$(grep -i "^ID=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+    os_id_like=$(grep -i "^ID_LIKE=" /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+  else
+    log_warn "/etc/os-release not readable; cannot detect distribution"
+  fi
+
+  case "${os_id}" in
+    fedora|rhel|centos|rocky|almalinux)
+      install_prereqs_linux_redhat
+      ;;
+    ubuntu|debian|pop|linuxmint)
+      install_prereqs_linux_ubuntu
+      ;;
+    arch|manjaro|endeavouros)
+      install_prereqs_linux_arch
+      ;;
+    *)
+      # Fall back to the distro family when the exact ID isn't one we know
+      case "${os_id_like}" in
+        *fedora*|*rhel*)
+          install_prereqs_linux_redhat
+          ;;
+        *debian*)
+          install_prereqs_linux_ubuntu
+          ;;
+        *arch*)
+          install_prereqs_linux_arch
+          ;;
+        *)
+          log_warn "Unrecognized distribution '${os_id:-unknown}'; skipping distro packages"
+          log_warn "Install stow, git, curl, zsh, cmake and a C/C++ toolchain manually, then re-run"
+          ;;
+      esac
+      ;;
+  esac
+
+  install_prereqs_common
+
+  log_success "Linux prerequisites installed"
+}
+
+cmd_bootstrap() {
+  log_info "Starting dotfiles bootstrap..."
+  
+  # Ensure required directories exist
+  mkdir -p ~/bin ~/go/bin ~/.local/bin ~/.cargo/bin
+  
+  case "$(uname)" in
+    Darwin)
+      install_prereqs_darwin
+      ;;
+    Linux)
+      install_prereqs_linux
+      ;;
+    *)
+      log_error "Unsupported OS: $(uname)"
+      return 1
+      ;;
+  esac
+  
+  log_success "Bootstrap complete!"
+  log_info "You may need to restart your shell or run: source ~/.zshrc"
+}
+
+cmd_update() {
+  log_info "Updating dotfiles plugins and tools..."
+  
+  install_prereqs_common
+  
+  # Update tmux plugins via TPM
+  if [[ -d ~/.tmux/plugins/tpm ]]; then
+    log_info "Updating tmux plugins..."
+    ~/.tmux/plugins/tpm/bin/update_plugins all || log_warn "Some tmux plugins failed to update"
+  fi
+  
+  log_success "Update complete!"
+}
+
+cmd_doctor() {
+  log_info "Running dotfiles doctor..."
+  
+  local issues=0
+  
+  # Check zsh completion security.
+  # compaudit is an autoloaded zsh function, not an external command, so it has
+  # to be autoloaded here - 'command -v compaudit' is false in a script.
+  log_info "Checking zsh completion security..."
+  autoload -Uz compaudit 2>/dev/null || true
+  if (( $+functions[compaudit] )); then
+    local insecure_dirs
+    insecure_dirs=$(compaudit 2>/dev/null || true)
+    if [[ -n "$insecure_dirs" ]]; then
+      log_warn "Found insecure completion directories:"
+      echo "$insecure_dirs"
+      log_info "To fix, run: chmod -R go-w ${insecure_dirs//$'\n'/ }"
+      issues=$((issues + 1))
+    else
+      log_success "All completion directories are secure"
+    fi
+  else
+    log_warn "compaudit unavailable; skipped the completion security check"
+    issues=$((issues + 1))
+  fi
+  
+  # Check required commands
+  log_info "Checking required commands..."
+  local required_commands=(git curl zsh)
+  for cmd in "${required_commands[@]}"; do
+    if cmd_exists "$cmd"; then
+      log_success "$cmd is installed"
+    else
+      log_error "$cmd is not installed"
+      issues=$((issues + 1))
+    fi
+  done
+  
+  # Check PATH sanity
+  log_info "Checking PATH..."
+  if [[ -z "${PATH:-}" ]]; then
+    log_error "PATH is empty!"
+    issues=$((issues + 1))
+  else
+    log_success "PATH is set"
+  fi
+  
+  # Check Oh-My-Zsh
+  if [[ ! -d ~/.oh-my-zsh ]]; then
+    log_warn "Oh-My-Zsh not found. Run: dotfiles bootstrap"
+    issues=$((issues + 1))
+  else
+    log_success "Oh-My-Zsh is installed"
+  fi
+  
+  # Check fzf
+  if cmd_exists fzf; then
+    log_success "fzf is installed"
+  else
+    log_warn "fzf not found. Run: dotfiles bootstrap"
+    issues=$((issues + 1))
+  fi
+  
+  # Check tmux
+  if cmd_exists tmux; then
+    log_success "tmux is installed"
+  else
+    log_warn "tmux not found. Run: dotfiles bootstrap"
+    issues=$((issues + 1))
+  fi
+  
+  if [[ $issues -eq 0 ]]; then
+    log_success "All checks passed!"
+    return 0
+  else
+    log_error "Found $issues issue(s)"
+    return 1
+  fi
+}
+
+# Main command dispatcher
+main() {
+  local cmd="${1:-help}"
+  
+  case "$cmd" in
+    bootstrap)
+      cmd_bootstrap
+      ;;
+    update)
+      cmd_update
+      ;;
+    doctor)
+      cmd_doctor
+      ;;
+    help|--help|-h)
+      cat << EOF
+Dotfiles Management CLI
+
+Usage: dotfiles <command>
+
+Commands:
+  bootstrap    Install all prerequisites and plugins
+  update       Update plugins and tools
+  doctor       Check for issues and security problems
+  help         Show this help message
+
+Examples:
+  dotfiles bootstrap    # First-time setup
+  dotfiles update       # Update plugins
+  dotfiles doctor       # Check system health
+EOF
+      ;;
+    *)
+      log_error "Unknown command: $cmd"
+      echo "Run 'dotfiles help' for usage information"
+      return 1
+      ;;
+  esac
+}
+
+main "$@"
