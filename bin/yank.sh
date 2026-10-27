@@ -28,7 +28,8 @@ fi
 
 # if copy backend is resolved, copy and exit
 if [ -n "$copy_backend" ]; then
-  printf "$buf" | eval "$copy_backend" 
+  # Use printf '%s' for safe output (avoids interpretation of escape sequences)
+  printf '%s' "$buf" | eval "$copy_backend" 
   exit;
 fi
 
@@ -63,4 +64,4 @@ esc="\033Ptmux;\033$esc\033\\"
 pane_active_tty=$(tmux list-panes -F "#{pane_active} #{pane_tty}" | awk '$1=="1" { print $2 }')
 target_tty="${SSH_TTY:-$pane_active_tty}"
 
-printf "$esc" > "$target_tty"
+printf '%s' "$esc" > "$target_tty"

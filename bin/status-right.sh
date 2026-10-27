@@ -27,14 +27,14 @@ TMUX_HOST_COLOR_BG="#006db5"
 TMUX_HOST_COLOR_FG="#ffffff"
 
 function ssh_user_online() {
-  who | grep '([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+)' 2>&1 >/dev/null
+  who 2>/dev/null | grep -q '([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+)' 2>/dev/null
 }
 
 if [[ -d ~/.task ]]; then
   STATUS_LINE="#[fg=$TMUX_TASK_COLOR_BG,bg=$TMUX_STATUS_BG_COLOR,nobold,nounderscore,noitalics]#[fg=$TMUX_TASK_COLOR_FG,bg=$TMUX_TASK_COLOR_BG]#{tasks_status}"
   STATUS_LINE+="#[fg=$TMUX_HOST_COLOR_BG,bg=$TMUX_TASK_COLOR_BG,nobold,nounderscore,noitalics]#[fg=$TMUX_HOST_COLOR_FG,bg=$TMUX_HOST_COLOR_BG] "
 else
-  STATUS_LINE+="#[fg=$TMUX_HOST_COLOR_BG,bg=$TMUX_STATUS_BG_COLOR,nobold,nounderscore,noitalics]#[fg=$TMUX_HOST_COLOR_FG,bg=$TMUX_HOST_COLOR_BG] "
+  STATUS_LINE="#[fg=$TMUX_HOST_COLOR_BG,bg=$TMUX_STATUS_BG_COLOR,nobold,nounderscore,noitalics]#[fg=$TMUX_HOST_COLOR_FG,bg=$TMUX_HOST_COLOR_BG] "
 fi
 
 if ssh_user_online; then
