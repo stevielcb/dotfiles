@@ -1,4 +1,20 @@
 set encoding=utf-8
+
+" Python3 host program for Neovim/Vim Python provider (YouCompleteMe, etc.)
+" Must be set before pathogen, filetype, or syntax so the provider sees it.
+" The chosen Python must have pynvim installed; if :checkhealth provider fails, run:
+"   python3 -m pip install --user pynvim   (or add --break-system-packages on Homebrew Python)
+let s:python3_path = substitute(system('command -v python3 2>/dev/null'), '\n$', '', '')
+if len(s:python3_path) > 0 && executable(s:python3_path)
+  let g:python3_host_prog = s:python3_path
+elseif executable('/opt/homebrew/opt/python@3.13/bin/python3')
+  let g:python3_host_prog = '/opt/homebrew/opt/python@3.13/bin/python3'
+elseif executable('/usr/local/opt/python@3.13/bin/python3')
+  let g:python3_host_prog = '/usr/local/opt/python@3.13/bin/python3'
+elseif executable('python3')
+  let g:python3_host_prog = 'python3'
+endif
+
 execute pathogen#infect()
 
 if (has("termguicolors"))
@@ -37,8 +53,6 @@ set updatetime=100
 set hidden
 
 let mapleader = ","
-
-let g:python3_host_prog = '/opt/homebrew/opt/python@3.13/bin/python3'
 
 autocmd FileType markdown setlocal shiftwidth=4 ts=4
 autocmd FileType go setlocal noexpandtab
