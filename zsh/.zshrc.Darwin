@@ -1,167 +1,26 @@
-################################################################################
-# Software Compliance
-################################################################################
+# macOS-specific runtime configuration
+# This file is sourced at shell startup and should be fast and non-interactive
+# All package installation and setup is handled by 'dotfiles bootstrap'
 
-# Make sure you already have homebrew before using these dotfiles
-# https://brew.sh/
-# And you'll also need stow already, obviously: `brew install stow`
-
-PREREQS_VERSION="202412-23"
-HOMEBREW_BIN="/opt/homebrew/bin/brew"
-
-function install_prereqs_darwin() {
-  ${HOMEBREW_BIN} install \
-    ack \
-    asciinema \
-    asciiquarium \
-    bat \
-    bvi \
-    cask \
-    cmake \
-    cmatrix \
-    colordiff \
-    csvkit \
-    datamash \
-    diff-so-fancy \
-    dos2unix \
-    eza \
-    fortune \
-    fzf \
-    gawk \
-    gh \
-    glances \
-    glide \
-    go \
-    howdoi \
-    htop \
-    httpie \
-    iftop \
-    lastpass-cli \
-    libmagic \
-    mycli \
-    ncdu \
-    neovim \
-    node \
-    npm \
-    nvm \
-    nyancat \
-    pgcli \
-    pipenv \
-    poetry \
-    ponysay \
-    prettier \
-    prettyping \
-    pup \
-    reattach-to-user-namespace \
-    ripgrep \
-    rust \
-    stow \
-    task \
-    termshark \
-    tldr \
-    tmux \
-    urlview \
-    vim \
-    z \
-    zsh-syntax-highlighting
-
-  ${HOMEBREW_BIN} install \
-    vagrant \
-    --cask
-
-  ${HOMEBREW_BIN} install \
-    homebrew/cask-fonts/font-fira-code-nerd-font \
-    --cask
-
-  ${HOMEBREW_BIN} install \
-    --HEAD universal-ctags/universal-ctags/universal-ctags
-
-  # For vim-devicons fzf integration
-  cargo install devicon-lookup
-
-  # MOTD server+client
-  go install github.com/stevielcb/motd-server@latest
-  go install github.com/stevielcb/motd-client@latest
-
-  # Sift
-  go install github.com/svent/sift@latest
-
-  # Wuzz - interactive HTTP inspection
-  go install github.com/asciimoo/wuzz@latest
-
-  # Tmuxinator
-  sudo gem install tmuxinator
-
-  # YouCompleteMe
-  # Flags for YouCompleteMe installation:
-  # --clang-completer: Enables C-family language support
-  # --go-completer: Enables Go language support
-  # --ts-completer: Enables TypeScript language support
-  # --rust-completer: Enables Rust language support
-  YCM_FLAGS=(--clang-completer --go-completer --ts-completer --rust-completer)
-  do_git_update ~/.vim/bundle/YouCompleteMe https://github.com/ycm-core/YouCompleteMe &&
-    ( cd ~/.vim/bundle/YouCompleteMe && \
-      git submodule update --init --recursive --recommend-shallow && \
-      /opt/homebrew/opt/python@3.13/bin/python3 ./install.py ${YCM_FLAGS[@]} \
-    )
-
-  # Neovim python support (for YCM)
-  pip3 install -U pynvim --break-system-packages
-
-  # Supercharged AWS
-  pip3 install -U saws --break-system-packages
-
-  # GitHub Copilot
-  do_git_update ~/.vim/bundle/copilot.vim https://github.com/github/copilot.vim
-
-  # vim-instant-markdown
-  do_git_update ~/.vim/bundle/vim-instant-markdown https://github.com/suan/vim-instant-markdown
-  /opt/homebrew/bin/npm install -g instant-markdown-d@next
-
-  # bash-language-server
-  /opt/homebrew/bin/npm install -g bash-language-server
-
-  # js-beautify
-  /opt/homebrew/bin/npm install -g js-beautify
-
-  # npm-groovy-lint
-  /opt/homebrew/bin/npm install -g npm-groovy-lint
-
-  install_prereqs_common
-
-  # Update build # to prevent the prereq check happening too often
-  echo -n "${PREREQS_VERSION}" > ${PREREQS}
-}
-
-# Check if we need to install software
-if ! [ -f ${PREREQS} ]; then
-  # We haven't done a prereq install if this file doesn't already exist
-  install_prereqs_darwin
-else
-  # The contents of the $PREREQS file will just be a build number. When the
-  # prereqs need to be updated, $PREREQS_VERSION should be incremented.
-  LAST_UPDATE=$(cat ${PREREQS})
-  if [ "${LAST_UPDATE}" != "${PREREQS_VERSION}" ]; then
-    install_prereqs_darwin
-  fi
-fi;
-
-################################################################################
-# Aliases
-################################################################################
-
+# Additional macOS-specific aliases
 alias ss="sudo -Es"
 
-################################################################################
-# Environment Variables
-################################################################################
-
+# Environment variables
 export DOTNET_ROOT="/usr/local/share/dotnet"
 export GOPATH="${HOME}/go"
-export GOROOT="$(brew --prefix golang)/libexec"
-export PATH="${GOPATH}/bin:${GOROOT}:${HOME}/.cargo/bin:${PATH}"
-export PATH="/opt/homebrew/opt/python@3.13/bin:$PATH"
+if command -v brew >/dev/null 2>&1; then
+  export GOROOT="$(brew --prefix golang 2>/dev/null)/libexec" || true
+fi
 
+# PATH additions (macOS-specific)
+if [[ -d "/opt/homebrew/opt/python@3.13/bin" ]]; then
+  path=(
+    "/opt/homebrew/opt/python@3.13/bin"
+    $path
+  )
+fi
+
+# Additional Oh-My-Zsh plugins for macOS
 ZSH_PLUGINS+=(
   brew
   cask
@@ -170,9 +29,5 @@ ZSH_PLUGINS+=(
   tmuxinator
 )
 
-# ZSH_SYNTAX=/usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-ZSH_THEME="powerlevel10k/powerlevel10k"
-ZSH_COLORIZE_STYLE="friendly"
-
+# Powerlevel10k right prompt elements
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(root_indicator ssh background_jobs history)
