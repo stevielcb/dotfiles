@@ -3,6 +3,11 @@
 # Powerlevel10k mode
 POWERLEVEL9K_MODE="nerdfont-complete"
 
+# Emit OSC 133 prompt and command markers. tmux 3.8 turns these into
+# pane-command-started / pane-command-finished / pane-shell-prompt events.
+# More portable than iTerm2 shell integration, which only covers macOS.
+POWERLEVEL9K_TERM_SHELL_INTEGRATION=true
+
 # Left prompt elements
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(status context dir vcs)
 POWERLEVEL9K_HIDE_BRANCH_ICON=true

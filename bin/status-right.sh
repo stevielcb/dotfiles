@@ -20,6 +20,15 @@
 #
 # The constructed status line is then set as the tmux status-right option.
 
+# Powerline separators and the OS icon are private-use-area glyphs. If the shell
+# running this script has no UTF-8 locale, tmux stores them as "_". run-shell
+# inherits the server environment (which has LANG set), but a manual
+# `source-file` from a bare shell does not.
+case "${LC_ALL:-${LC_CTYPE:-${LANG:-}}}" in
+  *[Uu][Tt][Ff]*) ;;
+  *) export LC_ALL=en_US.UTF-8 ;;
+esac
+
 TMUX_STATUS_BG_COLOR="#2b303a"
 TMUX_TASK_COLOR_BG="#00b548"
 TMUX_TASK_COLOR_FG="#000000"
@@ -43,7 +52,10 @@ else
   STATUS_LINE+='#h'
 fi
 
-STATUS_LINE+=' #( ~/bin/os-icon.sh ) '
+# os-icon.sh is a static uname lookup, so resolve it once here instead of
+# leaving a #() in the format for tmux to fork every status-interval.
+OS_ICON="$(~/bin/os-icon.sh 2>/dev/null)"
+STATUS_LINE+=" ${OS_ICON} "
 
 
 tmux set -g status-right "${STATUS_LINE}"
